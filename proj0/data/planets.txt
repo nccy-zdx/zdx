@@ -8,3 +8,4 @@
 [!] Your program should not read this line, as all 5 planets were already listed
 and there is no further information to be specified. So you can put comments here.
 This file contains the inner 4 planets of our solar system, and the sun.
+wait

@@ -296,7 +296,7 @@ import javax.swing.KeyStroke;
  *  or rescale it to fit snugly inside a width-by-height bounding box.
  *  <p>
  *  <b>Saving to a file.</b>
- *  You save your image to a file using the <em>File → Save</em> menu option.
+ *  You save your image to a file using the <em>File  Save</em> menu option.
  *  You can also save a file programatically using the following method:
  *  <ul>
  *  <li> {@link #save(String filename)}
@@ -352,7 +352,7 @@ import javax.swing.KeyStroke;
  *  <li> Clear the offscreen canvas.
  *  <li> Draw objects on the offscreen canvas.
  *  <li> Copy the offscreen canvas to the onscreen canvas.
- *  <li> Wait for a short while.
+ *  <li> Wait for a short while.11
  *  </ul>
  *  <p>
  *  The {@link #clear()}, {@link #show()}, and {@link #pause(int t)} methods
@@ -430,7 +430,7 @@ import javax.swing.KeyStroke;
  *       that is NaN will behave as if it is outside the canvas, and will not be visible.
  *  <li> Due to floating-point issues, an object drawn with an <em>x</em>- or
  *       <em>y</em>-coordinate that is way outside the canvas (such as the line segment
- *       from (0.5, –&infin;) to (0.5, &infin;) may not be visible even in the
+ *       from (0.5, &infin;) to (0.5, &infin;) may not be visible even in the
  *       part of the canvas where it should be.
  *  </ul>
  *  <p>
@@ -713,7 +713,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         JMenuItem menuItem1 = new JMenuItem(" Save...   ");
         menuItem1.addActionListener(std);
         menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                                Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         menu.add(menuItem1);
         return menuBar;
     }
@@ -1187,7 +1187,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * Draws a polygon with the vertices 
      * (<em>x</em><sub>0</sub>, <em>y</em><sub>0</sub>),
      * (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>), ...,
-     * (<em>x</em><sub><em>n</em>–1</sub>, <em>y</em><sub><em>n</em>–1</sub>).
+     * (<em>x</em><sub><em>n</em>1</sub>, <em>y</em><sub><em>n</em>1</sub>).
      *
      * @param  x an array of all the <em>x</em>-coordinates of the polygon
      * @param  y an array of all the <em>y</em>-coordinates of the polygon
@@ -1216,7 +1216,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      * Draws a polygon with the vertices 
      * (<em>x</em><sub>0</sub>, <em>y</em><sub>0</sub>),
      * (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>), ...,
-     * (<em>x</em><sub><em>n</em>–1</sub>, <em>y</em><sub><em>n</em>–1</sub>).
+     * (<em>x</em><sub><em>n</em>1</sub>, <em>y</em><sub><em>n</em>1</sub>).
      *
      * @param  x an array of all the <em>x</em>-coordinates of the polygon
      * @param  y an array of all the <em>y</em>-coordinates of the polygon
