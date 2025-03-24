@@ -1,41 +1,38 @@
 public class ArrayDeque<T> {
     private T[] items;
     private int size;
+    private int nextfirst;
+    private int nextlast;
 
     private void resize(int capacity){
-        if(items.length>=16){
-            if(items.length/size>4){
-                T[] sarr=(T[]) new Object[size*2];
-                System.arraycopy(items, 0, sarr, 0, size);
-                items=sarr;
-                return;
-            }
-        }
-        if(size==items.length){
-            T[] arr=(T[]) new Object[capacity];
-            System.arraycopy(items, 0, arr, 0, size);
-            items=arr;
-        } 
+        T[] arr=(T[]) new Object[capacity];
+        System.arraycopy(items, nextfirst+1, arr, arr.length+nextfirst-items.length, items.length-nextfirst-1);
+        System.arraycopy(items, 0, arr, 0, nextlast);
+        nextfirst=arr.length+nextfirst-items.length-1;
+        items=arr;
     }
     
     public ArrayDeque(){
         size=0;
         items=(T []) new Object[8];
+        nextfirst=4;
+        nextlast=5;
     }
 
     public void addFirst(T item){
-        resize(size*2);
-        T[] arr=(T[]) new Object[items.length];
-        arr[0]=item;
-        System.arraycopy(items, 0, arr, 1, size+1);
-        items=arr;
+        if(size==items.length) resize(size*2);
         ++size;
+        items[nextfirst]=item;
+        if(nextfirst>0) --nextfirst;
+        else nextfirst=items.length-1;
     }
     
     public void addLast(T item){
-        resize(size*2);
-        items[size]=item;
+        if(size==items.length) resize(size*2);
         ++size;
+        items[nextlast]=item;
+        if(nextlast<items.length-1) ++nextlast;
+        else nextlast=0;
     }
 
     public boolean isEmpty(){
@@ -55,24 +52,28 @@ public class ArrayDeque<T> {
 
     public T removeFirst(){
         if(size==0) return null;
-        T[] arr=(T[]) new Object[items.length];
-        T item=items[0];
-        System.arraycopy(items, 1, arr, 0, size-1);
-        items=arr;
-        resize(size*2);
+        ++nextfirst;
         --size;
+        T item=items[nextfirst];
         return item;
     }
 
     public T removeLast(){
         if(size==0) return null;
-        T item=items[size-1];
+        --nextlast;
         --size;
+        T item=items[nextlast];
         return item;
     }
 
     public T get(int index){
-        return items[index];
+        if(index<0||index>size) return null;
+        if(nextfirst+index>=size){
+            return items[index-items.length+nextfirst];
+        }
+        else{
+            return items[nextfirst+index+1];
+        }
     }
 
 }
