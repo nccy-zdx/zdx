@@ -29,6 +29,7 @@ public class ArrayDeque<T> {
         arr[0]=item;
         System.arraycopy(items, 0, arr, 1, size+1);
         items=arr;
+        ++size;
     }
     
     public void addLast(T item){
@@ -53,17 +54,19 @@ public class ArrayDeque<T> {
     }
 
     public T removeFirst(){
+        if(size==0) return null;
         T[] arr=(T[]) new Object[items.length];
         T item=items[0];
         System.arraycopy(items, 1, arr, 0, size-1);
         items=arr;
         resize(size*2);
+        --size;
         return item;
     }
 
     public T removeLast(){
+        if(size==0) return null;
         T item=items[size-1];
-        items[size-1]=null;
         --size;
         return item;
     }
