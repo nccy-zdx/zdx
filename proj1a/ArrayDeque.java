@@ -17,9 +17,11 @@ public class ArrayDeque<T> {
             nextlast=nextfirst+1;
             nextfirst=arr.length-1;
         }
-        else nextfirst=arr.length+nextfirst-items.length;
+        else{
+            nextfirst=arr.length+nextfirst-items.length;
+        }
         items=arr;
-        loadfactor=size/items.length;
+        loadfactor=(double)size/(double)items.length;
     }
     
     public ArrayDeque(){
@@ -27,7 +29,7 @@ public class ArrayDeque<T> {
         items=(T []) new Object[8];
         nextfirst=4;
         nextlast=5;
-        loadfactor=size/items.length;
+        loadfactor=(double)size/(double)items.length;
     }
 
     public void addFirst(T item){
@@ -35,17 +37,17 @@ public class ArrayDeque<T> {
         if(loadfactor<=0.25&&items.length>=16) resize(items.length/2);
         ++size;
         items[nextfirst]=item;
-        loadfactor=size/items.length;
+        loadfactor=(double)size/(double)items.length;
         if(nextfirst>0) --nextfirst;
         else nextfirst=items.length-1;
     }
     
     public void addLast(T item){
         if(size==items.length) resize(size*2);
-        if(loadfactor<=0.25&&items.length>=16) resize(items.length/2);
+        if(loadfactor<0.25&&items.length>=16) resize(items.length/2);
         ++size;
         items[nextlast]=item;
-        loadfactor=size/items.length;
+        loadfactor=(double)size/(double)items.length;
         if(nextlast<items.length-1) ++nextlast;
         else nextlast=0;
     }
@@ -71,7 +73,7 @@ public class ArrayDeque<T> {
         else nextfirst=0;
         --size;
         T item=items[nextfirst];
-        loadfactor=size/items.length;
+        loadfactor=(double)size/(double)items.length;
         if(loadfactor<=0.25&items.length>=16) resize(items.length/2);
         return item;
     }
@@ -82,7 +84,7 @@ public class ArrayDeque<T> {
         else nextlast=items.length-1;
         --size;
         T item=items[nextlast];
-        loadfactor=size/items.length;
+        loadfactor=(double)size/(double)items.length;
         if(loadfactor<=0.25&items.length>=16) resize(items.length/2);
         return item;
     }
