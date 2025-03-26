@@ -18,17 +18,11 @@ public class test {
     @Test
     public void testforad(){
         ArrayDeque<Integer> ad=new ArrayDeque<>();
-        ad.addLast(5);
-        ad.addFirst(7);
-        ad.addFirst(8);
-        ad.addLast(9);
-        ad.addFirst(10);
-        ad.addFirst(11);
-        ad.addFirst(12);
-        ad.addFirst(13);
-        ad.addFirst(14);
-        int i=ad.get(8);
-        assertEquals(9, i);
+        for(int i=0;i<50;++i) ad.addLast(i);
+        for(int i=0;i<50;++i) ad.removeFirst();
+        for(int i=0;i<50;++i) ad.addFirst(i);
+        int i=ad.removeLast();
+        assertEquals(5, i);
 
     }
 

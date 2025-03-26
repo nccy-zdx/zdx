@@ -7,18 +7,32 @@ public class ArrayDeque<T> {
 
     private void resize(int capacity){
         T[] arr=(T[]) new Object[capacity];
-        for(int i=0;i<nextlast;++i) arr[i]=items[i];
-        for(int i=0;i<items.length-nextfirst-1;++i){
-            arr[arr.length+nextfirst-items.length+i+1]=items[nextfirst+1+i];
-        }
-        //exception circumstance
-        if(nextfirst>nextlast&&items.length<=8){
+        if(nextfirst>nextlast){
             for(int i=0;i<items.length;++i) arr[i]=items[i];
             nextlast=nextfirst+1;
             nextfirst=arr.length-1;
         }
         else{
+            for(int i=0;i<nextlast;++i) arr[i]=items[i];
+            for(int i=0;i<items.length-nextfirst-1;++i) arr[arr.length+nextfirst-items.length+i+1]=items[nextfirst+1+i];
             nextfirst=arr.length+nextfirst-items.length;
+        }
+        items=arr;
+        loadfactor=(double)size/(double)items.length;
+    }
+
+    private void resize(){
+        T[] arr=(T[]) new Object[items.length/2];
+        if(nextfirst>nextlast){
+            for(int i=0;i<nextlast;++i) arr[i]=items[i];
+            for(int i=0;i<items.length-nextfirst-1;++i) arr[arr.length+nextfirst-items.length+i+1]=items[nextfirst+1+i];
+            nextfirst=arr.length+nextfirst-items.length;
+        }
+        else{
+            int count=0;
+            for(int i=nextfirst+1;i<nextlast;++i) arr[count++]=items[i];
+            nextlast=count;
+            nextfirst=arr.length-1;
         }
         items=arr;
         loadfactor=(double)size/(double)items.length;
@@ -34,7 +48,7 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item){
         if(size==items.length) resize(size*2);
-        if(loadfactor<=0.25&&items.length>=16) resize(items.length/2);
+        if(loadfactor<=0.25&&items.length>=16) resize();
         ++size;
         items[nextfirst]=item;
         loadfactor=(double)size/(double)items.length;
@@ -44,7 +58,7 @@ public class ArrayDeque<T> {
     
     public void addLast(T item){
         if(size==items.length) resize(size*2);
-        if(loadfactor<0.25&&items.length>=16) resize(items.length/2);
+        if(loadfactor<0.25&&items.length>=16) resize();
         ++size;
         items[nextlast]=item;
         loadfactor=(double)size/(double)items.length;
@@ -62,7 +76,7 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque(){
-        for(int i=0;i<size;++i){
+        for(int i=0;i<items.length;++i){
             System.out.print(items[i]+" ");
         }
     }
@@ -74,7 +88,7 @@ public class ArrayDeque<T> {
         --size;
         T item=items[nextfirst];
         loadfactor=(double)size/(double)items.length;
-        if(loadfactor<=0.25&items.length>=16) resize(items.length/2);
+        if(loadfactor<=0.25&&items.length>=16) resize();
         return item;
     }
 
@@ -85,7 +99,7 @@ public class ArrayDeque<T> {
         --size;
         T item=items[nextlast];
         loadfactor=(double)size/(double)items.length;
-        if(loadfactor<=0.25&items.length>=16) resize(items.length/2);
+        if(loadfactor<=0.25&&items.length>=16) resize();
         return item;
     }
 
