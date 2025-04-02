@@ -1,6 +1,5 @@
 package synthesizer;
 
-//Make sure this class is public
 public class GuitarString {
     /** Constants. Do not change. In case you're curious, the keyword final means
      * the values cannot be changed at runtime. We'll discuss this and other topics
@@ -15,6 +14,7 @@ public class GuitarString {
     public GuitarString(double frequency) {
         int freq=(int) frequency;
         buffer=new ArrayRingBuffer<>(SR/freq);
+        for(int i=0;i<buffer.capacity();++i) buffer.enqueue(0.0);
     }
 
 
@@ -22,6 +22,7 @@ public class GuitarString {
     public void pluck() {
         for(int i=0;i<buffer.capacity();++i){
             double randomnum=Math.random()-0.5;
+            if(buffer.isFull()) buffer.dequeue();
             buffer.enqueue(randomnum);
         }
     }
