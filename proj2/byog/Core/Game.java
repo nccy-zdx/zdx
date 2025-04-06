@@ -37,13 +37,18 @@ public class Game {
         intiate(finalWorldFrame);
         long seed=0;
         if(input.charAt(input.length()-1)=='q'&&input.charAt(input.length()-2)==':') quittype(input);
-        if(input.charAt(0)=='n') seed=newgametype(input);
-        else if(input.charAt(0)=='l') seed=loadtype();
+        if(input.charAt(0)=='n'){
+            seed=newgametype(input);
+            BuildRandomWorld(seed, finalWorldFrame);
+        }
+        else if(input.charAt(0)=='l'){
+            seed=loadtype();
+            BuildRandomWorld(seed, finalWorldFrame);
+        }
         else{
             System.out.println("illegal or wrong instruction, please open one more time");
-            return null;
+            System.exit(1);
         }
-        BuildRandomWorld(seed, finalWorldFrame);
         return finalWorldFrame;
     }//n,s,l,:q
 
@@ -57,7 +62,7 @@ public class Game {
         }
         if(scount==0){
             System.out.println("please enter s to save your input");
-            return 0;
+            System.exit(1);
         }
         String str=input.substring(1, scount);
         inputseed=Long.parseLong(str);
@@ -68,7 +73,7 @@ public class Game {
     private long loadtype(){
         if(count==0){
             System.out.println("No prior game loaded");
-            return 1;
+            System.exit(1);
         }
         return inputseed;
     }
@@ -309,14 +314,14 @@ public class Game {
         }
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         TERenderer t=new TERenderer();
         t.initialize(WIDTH, HEIGHT);
         TETile[][] tx=new TETile[WIDTH][HEIGHT];
         Game g=new Game();
-        tx=g.playWithInputString("n565454654531534534s");
+        tx=g.playWithInputString("n5654544534s");
         tx=g.playWithInputString("l");
         t.renderFrame(tx);
-    }
+    }*/
 
 }
