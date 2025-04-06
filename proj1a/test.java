@@ -10,8 +10,8 @@ public class test {
         lld.addLast(1);
         lld.addFirst(3);
         for(int i=0;i<50;++i) lld.addFirst(i);
-        for(int i=0;i<10;++i) lld.removeLast();
-        int i=lld.getRecursive(10);
+        for(int i=0;i<40;++i) lld.removeLast();
+        int i=lld.getRecursive(6);
         assertEquals(39, i);
     }
 

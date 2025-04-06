@@ -5,6 +5,7 @@ public class ArrayDeque<T> {
     private int nextlast;
     private double loadfactor;
 
+    //resize for bigger capacity
     private void resize(int capacity){
         T[] arr=(T[]) new Object[capacity];
         if(nextfirst>nextlast){
@@ -21,6 +22,7 @@ public class ArrayDeque<T> {
         loadfactor=(double)size/(double)items.length;
     }
 
+    //resize for smaller capacity
     private void resize(){
         T[] arr=(T[]) new Object[items.length/2];
         if(nextfirst>nextlast){

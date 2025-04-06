@@ -35,7 +35,7 @@ public class Game {
     public TETile[][] playWithInputString(String input) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
-        long seed=0;
+        long seed;
         if(input.charAt(input.length()-1)=='q'&&input.charAt(input.length()-2)==':') quittype(input);
         if(input.charAt(0)=='n'){
             seed=newgametype(input);

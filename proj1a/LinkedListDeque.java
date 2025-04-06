@@ -21,7 +21,7 @@ public class LinkedListDeque<T> {
         sentinel.prev=sentinel;
         sentinel.next=sentinel;
         itx=sentinel;
-    }//......
+    }
 
     public void addFirst(T it){
         ++size;
