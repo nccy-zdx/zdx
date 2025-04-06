@@ -1,6 +1,9 @@
 package byog.Core;
 
 import java.util.Random;
+import java.awt.Font;
+
+import edu.princeton.cs.introcs.StdDraw;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
@@ -11,8 +14,12 @@ public class Game {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private static long inputseed=0;
-    private int count=0;
+    private static double mousex;
+    private static double mousey;
+    private static TETile tilenow;
+    private static TETile tilefuture;
+    private static int[] playerpostionnow;
+    private static int[] playerpositionfuture;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -33,53 +40,44 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
+        ter.initialize(WIDTH, HEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
-        long seed;
-        if(input.charAt(input.length()-1)=='q'&&input.charAt(input.length()-2)==':') quittype(input);
-        if(input.charAt(0)=='n'){
-            seed=newgametype(input);
-            BuildRandomWorld(seed, finalWorldFrame);
-        }
-        else if(input.charAt(0)=='l'){
-            seed=loadtype();
-            BuildRandomWorld(seed, finalWorldFrame);
-        }
-        else{
-            System.out.println("illegal or wrong instruction, please open one more time");
-            System.exit(1);
+        finalWorldFrame[0][0]=Tileset.PLAYER;
+        playerpostionnow=new int[]{0,0};
+        tilenow=Tileset.NOTHING;
+        boolean gameover=false;
+        long seed=0;
+        BuildRandomWorld(seed, finalWorldFrame);
+        ter.renderFrame(finalWorldFrame);
+        while(!gameover){
+            while(StdDraw.hasNextKeyTyped()){
+                if('q'==StdDraw.nextKeyTyped()) gameover=true;
+            }
+            mousex=StdDraw.mouseX();
+            mousey=StdDraw.mouseY();
+            if(mousemove(StdDraw.mouseX(), StdDraw.mouseY())) showtile(finalWorldFrame);
         }
         return finalWorldFrame;
-    }//n,s,l,:q
-
-    private long newgametype(String input){
-        int scount=0;
-        for(int i=1;i<input.length();++i){
-            if(input.charAt(i)=='s'){
-                scount=i;
-                break;
-            }
-        }
-        if(scount==0){
-            System.out.println("please enter s to save your input");
-            System.exit(1);
-        }
-        String str=input.substring(1, scount);
-        inputseed=Long.parseLong(str);
-        ++count;
-        return inputseed;
     }
 
-    private long loadtype(){
-        if(count==0){
-            System.out.println("No prior game loaded");
-            System.exit(1);
+    private boolean mousemove(double x,double y){
+        if(x!=mousex||y!=mousey){
+            mousex=x;
+            mousey=y;
+            return true;
         }
-        return inputseed;
+        return false;
     }
 
-    private void quittype(String input){
-        input=input.substring(0, input.length()-2);
+    private void showtile(TETile[][] world){
+        StdDraw.clear();;
+        ter.renderFrame(world);
+        Font font = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(5, HEIGHT-1, world[(int) mousex][(int) mousey].description());
+        StdDraw.show();
     }
 
     //build a random world consists of rooms and hallways.
@@ -314,14 +312,9 @@ public class Game {
         }
     }
 
-    /*public static void main(String[] args){
-        TERenderer t=new TERenderer();
-        t.initialize(WIDTH, HEIGHT);
-        TETile[][] tx=new TETile[WIDTH][HEIGHT];
+    public static void main(String[] args){
         Game g=new Game();
-        tx=g.playWithInputString("n5654544534s");
-        tx=g.playWithInputString("l");
-        t.renderFrame(tx);
-    }*/
+        g.playWithInputString(null);
+    }
 
 }
