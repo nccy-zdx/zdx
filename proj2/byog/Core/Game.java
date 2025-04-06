@@ -11,7 +11,7 @@ public class Game {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private static int inputseed=0;
+    private static long inputseed=0;
     private int count=0;
 
     /**
@@ -35,7 +35,7 @@ public class Game {
     public TETile[][] playWithInputString(String input) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
-        int seed=0;
+        long seed=0;
         if(input.charAt(input.length()-1)=='q'&&input.charAt(input.length()-2)==':') quittype(input);
         if(input.charAt(0)=='n') seed=newgametype(input);
         else if(input.charAt(0)=='l') seed=loadtype();
@@ -47,7 +47,7 @@ public class Game {
         return finalWorldFrame;
     }//n,s,l,:q
 
-    private int newgametype(String input){
+    private long newgametype(String input){
         int scount=0;
         for(int i=1;i<input.length();++i){
             if(input.charAt(i)=='s'){
@@ -60,12 +60,12 @@ public class Game {
             return 0;
         }
         String str=input.substring(1, scount);
-        inputseed=Integer.parseInt(str);
+        inputseed=Long.parseLong(str);
         ++count;
         return inputseed;
     }
 
-    private int loadtype(){
+    private long loadtype(){
         if(count==0){
             System.out.println("No prior game loaded");
             return 1;
@@ -78,18 +78,18 @@ public class Game {
     }
 
     //build a random world consists of rooms and hallways.
-    private TETile[][] BuildRandomWorld(int s,TETile[][] rw){
+    private TETile[][] BuildRandomWorld(long s,TETile[][] rw){
         Random r=new Random(s);
         int rn=r.nextInt(50)+100;
         for(int i=0;i<rn;++i){
-            if(r.nextInt(2)==0) BuildRandomRoom_rectangular(r.nextInt(), rw);
-            else BuildRandomHallway(s, rw);
+            if(r.nextInt(2)==0) BuildRandomRoom_rectangular(r.nextLong(), rw);
+            else BuildRandomHallway(r.nextLong(), rw);
         }
         return rw;
     }
 
     //build a random room which won`t cover anything.
-    private void BuildRandomRoom_rectangular(int s,TETile[][] rr_rectangular){
+    private void BuildRandomRoom_rectangular(long s,TETile[][] rr_rectangular){
         Random r=new Random(s);
         int len=r.nextInt(10)+3;
         int wid=r.nextInt(10)+3;
@@ -130,11 +130,11 @@ public class Game {
     }
 
     //room should be connect.otherwise you can`t go into it,right?
-    private void connect_rooms(int s,int[] data,TETile[][] world){
+    private void connect_rooms(long s,int[] data,TETile[][] world){
         if(!canroomconnect(data, world)) return;
         Random r=new Random(s);
         while(!roomfloorconnect(data,world)){
-            BuildConnectHallway(r.nextInt(),data, world);
+            BuildConnectHallway(r.nextLong(),data, world);
         }
     }
 
@@ -154,7 +154,7 @@ public class Game {
     }
 
     //create random hallway that connects rooms.
-    private void BuildConnectHallway(int s,int[] data,TETile[][] world){
+    private void BuildConnectHallway(long s,int[] data,TETile[][] world){
         int[] hdata;
         for(int i=data[2]+1;i<data[2]+data[0]-1;++i){
             for(int j=data[3];j<data[3]+data[1];j+=data[1]-1){
@@ -262,7 +262,7 @@ public class Game {
     }
 
     //build a random hallway that connects rooms or hallways.
-    private void BuildRandomHallway(int s,TETile[][] rh){
+    private void BuildRandomHallway(long s,TETile[][] rh){
         Random r=new Random(s);
         int len=r.nextInt(15)+1;
         /*build vertical hallway while r.nextInt==1,otherwise
@@ -314,7 +314,7 @@ public class Game {
         t.initialize(WIDTH, HEIGHT);
         TETile[][] tx=new TETile[WIDTH][HEIGHT];
         Game g=new Game();
-        tx=g.playWithInputString("n56545s");
+        tx=g.playWithInputString("n565454654531534534s");
         tx=g.playWithInputString("l");
         t.renderFrame(tx);
     }
