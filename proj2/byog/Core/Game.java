@@ -77,12 +77,13 @@ public class Game {
         return finalWorldFrame;
     }
 
+    //change static constants to make player move.
     private void playermove(TETile[][] world,int ch){
         if(ch=='w'){
             if(playerpostionnow[1]+1==HEIGHT) System.out.println("you can`t move across the bound.try other direction.");
             else if(world[playerpostionnow[0]][playerpostionnow[1]+1]==Tileset.WALL||
             world[playerpostionnow[0]][playerpostionnow[1]+1]==Tileset.LOCKED_DOOR)
-            System.out.println("you can`t move across wall or locked door. go other place.");
+            System.out.println("you can`t move across wall or locked door. go to other places.");
             else{
                 playerpositionfuture[0]=playerpostionnow[0];
                 playerpositionfuture[1]=playerpostionnow[1]+1;
@@ -93,7 +94,7 @@ public class Game {
             if(playerpostionnow[0]-1==-1) System.out.println("you can`t move across the bound.try other direction.");
             else if(world[playerpostionnow[0]-1][playerpostionnow[1]]==Tileset.WALL||
             world[playerpostionnow[0]-1][playerpostionnow[1]]==Tileset.LOCKED_DOOR)
-            System.out.println("you can`t move across wall or locked door. go other place.");
+            System.out.println("you can`t move across wall or locked door. go to other places.");
             else{
                 playerpositionfuture[0]=playerpostionnow[0]-1;
                 playerpositionfuture[1]=playerpostionnow[1];
@@ -104,7 +105,7 @@ public class Game {
             if(playerpostionnow[1]-1==-1) System.out.println("you can`t move across the bound.try other direction.");
             else if(world[playerpostionnow[0]][playerpostionnow[1]-1]==Tileset.WALL||
             world[playerpostionnow[0]][playerpostionnow[1]-1]==Tileset.LOCKED_DOOR)
-            System.out.println("you can`t move across wall or locked door. go other place.");
+            System.out.println("you can`t move across wall or locked door. go to other places.");
             else{
                 playerpositionfuture[0]=playerpostionnow[0];
                 playerpositionfuture[1]=playerpostionnow[1]-1;
@@ -115,7 +116,7 @@ public class Game {
             if(playerpostionnow[0]+1==WIDTH) System.out.println("you can`t move across the bound.try other direction.");
             else if(world[playerpostionnow[0]+1][playerpostionnow[1]]==Tileset.WALL||
             world[playerpostionnow[0]+1][playerpostionnow[1]]==Tileset.LOCKED_DOOR)
-            System.out.println("you can`t move across wall or locked door. go other place.");
+            System.out.println("you can`t move across wall or locked door. go to other places.");
             else{
                 playerpositionfuture[0]=playerpostionnow[0]+1;
                 playerpositionfuture[1]=playerpostionnow[1];
@@ -124,6 +125,7 @@ public class Game {
         }
     }
 
+    //draw player`s position using static constants and updata these constants.
     private void drawplayer(TETile[][] world){
         tilefuture=world[playerpositionfuture[0]][playerpositionfuture[1]];
         world[playerpositionfuture[0]][playerpositionfuture[1]]=Tileset.PLAYER;
@@ -192,6 +194,35 @@ public class Game {
             }
         }
         connect_rooms(s,data, rr_rectangular);
+        if(r.nextInt(2)==1){
+            int x=r.nextInt(len-2)+rlx+1;
+            int y;
+            if(r.nextInt(2)==1) y=rly;
+            else y=rly+wid-1;
+            if(wallaroundnothing(x, y, rr_rectangular)){
+                if(r.nextInt(2)==1) rr_rectangular[x][y]=Tileset.LOCKED_DOOR;
+                else rr_rectangular[x][y]=Tileset.UNLOCKED_DOOR;
+            }
+        }
+        else{
+            int x;
+            int y=r.nextInt(wid-2)+rly+1;
+            if(r.nextInt(2)==1) x=rlx;
+            else x=rlx+len-1;
+            if(wallaroundnothing(x, y, rr_rectangular)){
+                if(r.nextInt(2)==1) rr_rectangular[x][y]=Tileset.LOCKED_DOOR;
+                else rr_rectangular[x][y]=Tileset.UNLOCKED_DOOR;
+            }
+        }
+    }
+
+    //check if the wall is next to nothing.
+    private boolean wallaroundnothing(int x, int y,TETile[][] world){
+        if((y+1<HEIGHT&&world[x][y+1]==Tileset.NOTHING)||
+        (x+1<WIDTH&&world[x+1][y]==Tileset.NOTHING)||
+        (x-1>-1&&world[x-1][y]==Tileset.NOTHING)||
+        (y-1>-1&&world[x][y-1]==Tileset.NOTHING)) return true;
+        return false;
     }
 
     //room can`t cover room or hallway.or will you be happy when your rooms or hallways were ruined?
@@ -222,12 +253,12 @@ public class Game {
     private boolean roomfloorconnect(int[] data,TETile[][] world){
         for(int i=data[2];i<data[2]+data[0];i+=data[0]-1){
             for(int j=data[3]+1;j<data[3]+data[1]-1;++j){
-                if(world[i][j]==Tileset.FLOOR) return true;   
+                if(world[i][j]==Tileset.FLOOR||world[i][j]==Tileset.UNLOCKED_DOOR) return true;   
             }
         }
         for(int i=data[3];i<data[3]+data[1];i+=data[1]-1){
             for(int j=data[2]+1;j<data[2]+data[0]-1;++j){
-                if(world[j][i]==Tileset.FLOOR) return true;
+                if(world[j][i]==Tileset.FLOOR||world[j][i]==Tileset.UNLOCKED_DOOR) return true;
             }
         }
         return false;
@@ -303,6 +334,13 @@ public class Game {
         for(int a=data[2];a<data[2]+3;++a){
             for(int b=data[3];b<data[3]+data[0];++b){
                 if(a==data[2]+1){
+                    if(b==data[3]||b==data[3]+data[0]-1){
+                        Random r=new Random(a);
+                        if(r.nextInt(10)==1){
+                            world[a][b]=Tileset.UNLOCKED_DOOR;
+                            continue;
+                        }
+                    }
                     world[a][b]=Tileset.FLOOR;
                     continue;
                 }
@@ -317,6 +355,13 @@ public class Game {
         for(int a=data[2];a<data[2]+data[0];++a){
             for(int b=data[3];b<data[3]+3;++b){
                 if(b==data[3]+1){
+                    if(a==data[2]||a==data[2]+data[0]-1){
+                        Random r=new Random(a);
+                        if(r.nextInt(10)==1){
+                            world[a][b]=Tileset.UNLOCKED_DOOR;
+                            continue;
+                        }
+                    }
                     world[a][b]=Tileset.FLOOR;
                     continue;
                 }
@@ -383,7 +428,7 @@ public class Game {
     }
 
     //initiate the world with Nothing.
-    private static void intiate(TETile[][] world){
+    private void intiate(TETile[][] world){
         for(int x=0;x<WIDTH;++x){
             for(int y=0;y<HEIGHT;++y) world[x][y]=Tileset.NOTHING;
         }
