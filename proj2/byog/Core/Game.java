@@ -18,8 +18,8 @@ public class Game {
     private static double mousey;
     private static TETile tilenow;
     private static TETile tilefuture;
-    private static int[] playerpostionnow;
-    private static int[] playerpositionfuture;
+    private static int[] playerpostionnow=new int[2];
+    private static int[] playerpositionfuture=new int[2];
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -44,23 +44,98 @@ public class Game {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
         finalWorldFrame[0][0]=Tileset.PLAYER;
-        playerpostionnow=new int[]{0,0};
+        playerpostionnow[0]=0;
+        playerpostionnow[1]=0;
         tilenow=Tileset.NOTHING;
         boolean gameover=false;
         long seed=0;
+        mousex=StdDraw.mouseX();
+        mousey=StdDraw.mouseY();
         BuildRandomWorld(seed, finalWorldFrame);
         ter.renderFrame(finalWorldFrame);
         while(!gameover){
             while(StdDraw.hasNextKeyTyped()){
-                if('q'==StdDraw.nextKeyTyped()) gameover=true;
+                char control =StdDraw.nextKeyTyped();
+                if(':'==control){
+                    if(StdDraw.hasNextKeyTyped()){
+                        if('q'==StdDraw.nextKeyTyped()){
+                            System.out.println("game over, please close the window.");
+                            gameover=true;
+                        }
+                        else System.out.println("illegal instruction : without q, please enter one more time");
+                        break;
+                    }
+                }
+                if('w'!=control&&'a'!=control&&'s'!=control&&'d'!=control){
+                    System.out.println("illegal instruction, please enter one more time.");
+                    break;
+                }
+                else playermove(finalWorldFrame, control);
             }
-            mousex=StdDraw.mouseX();
-            mousey=StdDraw.mouseY();
             if(mousemove(StdDraw.mouseX(), StdDraw.mouseY())) showtile(finalWorldFrame);
         }
         return finalWorldFrame;
     }
 
+    private void playermove(TETile[][] world,int ch){
+        if(ch=='w'){
+            if(playerpostionnow[1]+1==HEIGHT) System.out.println("you can`t move across the bound.try other direction.");
+            else if(world[playerpostionnow[0]][playerpostionnow[1]+1]==Tileset.WALL||
+            world[playerpostionnow[0]][playerpostionnow[1]+1]==Tileset.LOCKED_DOOR)
+            System.out.println("you can`t move across wall or locked door. go other place.");
+            else{
+                playerpositionfuture[0]=playerpostionnow[0];
+                playerpositionfuture[1]=playerpostionnow[1]+1;
+                drawplayer(world);
+            }
+        }
+        else if(ch=='a'){
+            if(playerpostionnow[0]-1==-1) System.out.println("you can`t move across the bound.try other direction.");
+            else if(world[playerpostionnow[0]-1][playerpostionnow[1]]==Tileset.WALL||
+            world[playerpostionnow[0]-1][playerpostionnow[1]]==Tileset.LOCKED_DOOR)
+            System.out.println("you can`t move across wall or locked door. go other place.");
+            else{
+                playerpositionfuture[0]=playerpostionnow[0]-1;
+                playerpositionfuture[1]=playerpostionnow[1];
+                drawplayer(world);
+            }
+        }
+        else if(ch=='s'){
+            if(playerpostionnow[1]-1==-1) System.out.println("you can`t move across the bound.try other direction.");
+            else if(world[playerpostionnow[0]][playerpostionnow[1]-1]==Tileset.WALL||
+            world[playerpostionnow[0]][playerpostionnow[1]-1]==Tileset.LOCKED_DOOR)
+            System.out.println("you can`t move across wall or locked door. go other place.");
+            else{
+                playerpositionfuture[0]=playerpostionnow[0];
+                playerpositionfuture[1]=playerpostionnow[1]-1;
+                drawplayer(world);
+            }
+        }
+        else{
+            if(playerpostionnow[0]+1==WIDTH) System.out.println("you can`t move across the bound.try other direction.");
+            else if(world[playerpostionnow[0]+1][playerpostionnow[1]]==Tileset.WALL||
+            world[playerpostionnow[0]+1][playerpostionnow[1]]==Tileset.LOCKED_DOOR)
+            System.out.println("you can`t move across wall or locked door. go other place.");
+            else{
+                playerpositionfuture[0]=playerpostionnow[0]+1;
+                playerpositionfuture[1]=playerpostionnow[1];
+                drawplayer(world);
+            }
+        }
+    }
+
+    private void drawplayer(TETile[][] world){
+        tilefuture=world[playerpositionfuture[0]][playerpositionfuture[1]];
+        world[playerpositionfuture[0]][playerpositionfuture[1]]=Tileset.PLAYER;
+        world[playerpostionnow[0]][playerpostionnow[1]]=tilenow;
+        tilenow=tilefuture;
+        playerpostionnow[0]=playerpositionfuture[0];
+        playerpostionnow[1]=playerpositionfuture[1];
+        StdDraw.clear();
+        ter.renderFrame(world);
+    }
+
+    //check if mouse has moved.
     private boolean mousemove(double x,double y){
         if(x!=mousex||y!=mousey){
             mousex=x;
@@ -70,9 +145,11 @@ public class Game {
         return false;
     }
 
+    //show the tile that mouse is pointing at.
     private void showtile(TETile[][] world){
         StdDraw.clear();;
         ter.renderFrame(world);
+        if(mousex>=WIDTH||mousey>=HEIGHT||mousex<0||mousey<0) return;
         Font font = new Font("Monaco", Font.BOLD, 20);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
