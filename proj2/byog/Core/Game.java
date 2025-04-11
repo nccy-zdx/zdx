@@ -20,11 +20,83 @@ public class Game {
     private static TETile tilefuture;
     private static int[] playerpostionnow=new int[2];
     private static int[] playerpositionfuture=new int[2];
+    private long seed;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        int count=0;
+        startUI();
+        while(true){
+            if(StdDraw.hasNextKeyTyped()){
+                if(StdDraw.nextKeyTyped()=='n'){
+                    int i=1;
+                    char[] ch=new char[10];
+                    boolean enternum=false;
+                    ch[0]='n';
+                    while(!enternum){
+                        while(StdDraw.hasNextKeyTyped()){
+                            char keytyped=StdDraw.nextKeyTyped();
+                            if('s'==keytyped) enternum=true;
+                            ch[i]=keytyped;
+                            ++i;
+                        }
+                    }
+                    String str=new String(ch);
+                    newgameseed(str);
+                    break;
+                }
+                else if(StdDraw.nextKeyTyped()=='l'){
+                    break;
+                }
+                else if(StdDraw.nextKeyTyped()=='q'){
+                    break;
+                }
+                else{
+                    System.out.println("your enter is illegal, please enter one more time.");
+                    ++count;
+                    if(count>10){
+                        System.out.println("you have mistaken more than 10 times,please restart.");
+                        return;
+                    }
+                }
+            }
+        }
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        intiate(finalWorldFrame);
+        finalWorldFrame[0][0]=Tileset.PLAYER;
+        playerpostionnow[0]=0;
+        playerpostionnow[1]=0;
+        tilenow=Tileset.NOTHING;
+        mousex=StdDraw.mouseX();
+        mousey=StdDraw.mouseY();
+        BuildRandomWorld(finalWorldFrame);
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(finalWorldFrame);
+        keyplay(finalWorldFrame);
+    }
+
+    private void keyplay(TETile[][] world){
+        boolean gameover=false;
+        while(!gameover){
+            while(StdDraw.hasNextKeyTyped()){
+                char control =StdDraw.nextKeyTyped();
+                if(':'==control){
+                    while(StdDraw.hasNextKeyTyped()){
+                        System.out.println(2);
+                        char cont=StdDraw.nextKeyTyped();
+                        if('q'==cont){
+                            System.out.println("game over, please close the window.");
+                            System.exit(1);
+                        }
+                        else System.out.println("illegal instruction : without q, please enter one more time");
+                    }
+                }
+                else playermove(world, control);
+            }
+            if(mousemove(StdDraw.mouseX(), StdDraw.mouseY())) showtile(world);
+        }
     }
 
     /**
@@ -36,49 +108,79 @@ public class Game {
      * world. However, the behavior is slightly different. After playing with "n123sss:q", the game
      * should save, and thus if we then called playWithInputString with the string "l", we'd expect
      * to get the exact same world back again, since this corresponds to loading the saved game.
-     * @param input the input string to feed to your program
-     * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        ter.initialize(WIDTH, HEIGHT);
+        int count=0;
+        startUI();
+        while(true){
+            if(input.startsWith("n")){
+                newgameseed(input);
+                break;
+            } 
+            else if(input.startsWith("l")){
+
+                break;
+            }
+            else if(input.startsWith("q")){
+                
+                break;
+            }
+            else{
+                System.out.println("your enter is illegal, please enter one more time.");
+                ++count;
+                if(count>10){
+                    System.out.println("you have mistaken more than 10 times,please restart.");
+                    return null;
+                } 
+            }
+        }
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
         finalWorldFrame[0][0]=Tileset.PLAYER;
         playerpostionnow[0]=0;
         playerpostionnow[1]=0;
         tilenow=Tileset.NOTHING;
-        boolean gameover=false;
-        long seed=0;
         mousex=StdDraw.mouseX();
         mousey=StdDraw.mouseY();
-        BuildRandomWorld(seed, finalWorldFrame);
+        BuildRandomWorld(finalWorldFrame);
+        ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(finalWorldFrame);
-        while(!gameover){
-            while(StdDraw.hasNextKeyTyped()){
-                char control =StdDraw.nextKeyTyped();
-                if(':'==control){
-                    if(StdDraw.hasNextKeyTyped()){
-                        if('q'==StdDraw.nextKeyTyped()){
-                            System.out.println("game over, please close the window.");
-                            gameover=true;
-                        }
-                        else System.out.println("illegal instruction : without q, please enter one more time");
-                        break;
-                    }
-                }
-                if('w'!=control&&'a'!=control&&'s'!=control&&'d'!=control){
-                    System.out.println("illegal instruction, please enter one more time.");
-                    break;
-                }
-                else playermove(finalWorldFrame, control);
-            }
-            if(mousemove(StdDraw.mouseX(), StdDraw.mouseY())) showtile(finalWorldFrame);
-        }
         return finalWorldFrame;
+    }
+
+    private void newgameseed(String input){
+        for(int i=1;i<input.length();++i){
+            if(input.charAt(i)=='s'){
+                String str=input.substring(1, i);
+                seed=Long.parseLong(str);
+                return;
+            }
+        }
+        System.out.println("your input doesn`t have char s, please restart.");
+        System.exit(1);
+    }
+
+    private void startUI(){
+        StdDraw.setCanvasSize(WIDTH*16, HEIGHT*16);
+        StdDraw.clear(StdDraw.BLACK);
+        Font fonts = new Font("Monaco", Font.BOLD, 40);
+        StdDraw.setFont(fonts);
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(0.5, 0.75, "Push    Box!");
+        Font fonte = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(fonte);
+        StdDraw.text(0.5, 0.6, "New Game (N)");
+        StdDraw.text(0.5, 0.5, "Load Game (L)");
+        StdDraw.text(0.5, 0.4, " Quit Game (Q)");
+        StdDraw.show();
     }
 
     //change static constants to make player move.
     private void playermove(TETile[][] world,int ch){
+        if('w'!=ch&&'a'!=ch&&'s'!=ch&&'d'!=ch){
+            System.out.println("illegal instruction, please enter one more time.");
+            return;
+        }
         if(ch=='w'){
             if(playerpostionnow[1]+1==HEIGHT) System.out.println("you can`t move across the bound.try other direction.");
             else if(world[playerpostionnow[0]][playerpostionnow[1]+1]==Tileset.WALL||
@@ -149,10 +251,10 @@ public class Game {
 
     //show the tile that mouse is pointing at.
     private void showtile(TETile[][] world){
-        StdDraw.clear();;
+        StdDraw.clear();
         ter.renderFrame(world);
         if(mousex>=WIDTH||mousey>=HEIGHT||mousex<0||mousey<0) return;
-        Font font = new Font("Monaco", Font.BOLD, 20);
+        Font font = new Font("Monaco", Font.BOLD, 14);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.WHITE);
         StdDraw.text(5, HEIGHT-1, world[(int) mousex][(int) mousey].description());
@@ -160,8 +262,8 @@ public class Game {
     }
 
     //build a random world consists of rooms and hallways.
-    private TETile[][] BuildRandomWorld(long s,TETile[][] rw){
-        Random r=new Random(s);
+    private TETile[][] BuildRandomWorld(TETile[][] rw){
+        Random r=new Random(seed);
         int rn=r.nextInt(50)+100;
         for(int i=0;i<rn;++i){
             if(r.nextInt(2)==0) BuildRandomRoom_rectangular(r.nextLong(), rw);
@@ -436,7 +538,7 @@ public class Game {
 
     public static void main(String[] args){
         Game g=new Game();
-        g.playWithInputString(null);
+        g.playWithKeyboard();
     }
 
 }
