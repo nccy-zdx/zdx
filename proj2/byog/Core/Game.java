@@ -2,6 +2,11 @@ package byog.Core;
 
 import java.util.Random;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import edu.princeton.cs.introcs.StdDraw;
 
@@ -11,7 +16,6 @@ import byog.TileEngine.Tileset;
 
 public class Game {
     TERenderer ter = new TERenderer();
-    /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
     private static double mousex;
@@ -20,17 +24,20 @@ public class Game {
     private static TETile tilefuture;
     private static int[] playerpostionnow=new int[2];
     private static int[] playerpositionfuture=new int[2];
-    private long seed;
+    private static long seed;
+    private String dir="E:\\cs61b_da_java\\zdx\\proj2\\byog\\Core\\data.txt";
+    private File file=new File(dir);
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
-        int count=0;
         startUI();
+        int count=0;
         while(true){
             if(StdDraw.hasNextKeyTyped()){
-                if(StdDraw.nextKeyTyped()=='n'){
+                char control=StdDraw.nextKeyTyped();
+                if(control=='n'){
                     int i=1;
                     char[] ch=new char[10];
                     boolean enternum=false;
@@ -47,10 +54,10 @@ public class Game {
                     newgameseed(str);
                     break;
                 }
-                else if(StdDraw.nextKeyTyped()=='l'){
+                else if(control=='l'){
                     break;
                 }
-                else if(StdDraw.nextKeyTyped()=='q'){
+                else if(control=='q'){
                     break;
                 }
                 else{
@@ -78,19 +85,22 @@ public class Game {
     }
 
     private void keyplay(TETile[][] world){
-        boolean gameover=false;
-        while(!gameover){
+        while(true){
             while(StdDraw.hasNextKeyTyped()){
                 char control =StdDraw.nextKeyTyped();
                 if(':'==control){
-                    while(StdDraw.hasNextKeyTyped()){
-                        System.out.println(2);
-                        char cont=StdDraw.nextKeyTyped();
-                        if('q'==cont){
-                            System.out.println("game over, please close the window.");
-                            System.exit(1);
+                    while(true){
+                        while(StdDraw.hasNextKeyTyped()){
+                            char cont=StdDraw.nextKeyTyped();
+                            if('q'==cont){
+                                System.out.println("Game over. Every dream has an end. It`s time to wake up.");
+                                System.exit(1);
+                            }
+                            else{
+                                System.out.println("illegal instruction : without q, please enter one more time");
+                                break;
+                            }
                         }
-                        else System.out.println("illegal instruction : without q, please enter one more time");
                     }
                 }
                 else playermove(world, control);
@@ -110,30 +120,7 @@ public class Game {
      * to get the exact same world back again, since this corresponds to loading the saved game.
      */
     public TETile[][] playWithInputString(String input) {
-        int count=0;
-        startUI();
-        while(true){
-            if(input.startsWith("n")){
-                newgameseed(input);
-                break;
-            } 
-            else if(input.startsWith("l")){
-
-                break;
-            }
-            else if(input.startsWith("q")){
-                
-                break;
-            }
-            else{
-                System.out.println("your enter is illegal, please enter one more time.");
-                ++count;
-                if(count>10){
-                    System.out.println("you have mistaken more than 10 times,please restart.");
-                    return null;
-                } 
-            }
-        }
+        String strexecution=StartStep(input);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
         finalWorldFrame[0][0]=Tileset.PLAYER;
@@ -145,21 +132,91 @@ public class Game {
         BuildRandomWorld(finalWorldFrame);
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(finalWorldFrame);
+        for(int i=0;i<strexecution.length();++i) playermove(finalWorldFrame, strexecution.charAt(i));
         return finalWorldFrame;
     }
 
-    private void newgameseed(String input){
+    //write game data to the datafile.
+    private void writedata(){
+        try{
+            FileWriter fw=new FileWriter(file);
+            fw.write("seed:"+seed+'\n');
+            fw.write("tilenow:"+tilenow.description()+'\n');
+            fw.write("playerpositionnow[0]:"+playerpostionnow[0]+'\n');
+            fw.write("playerpositionnow[1]:"+playerpostionnow[1]+'\n');
+            fw.flush();
+            fw.close();
+        }
+        catch(IOException e){
+            System.out.println("Can`t write into file.");
+            System.exit(1);
+        }
+    }
+
+    private void readdata(){
+        try{
+            FileReader fr=new FileReader(file);
+            char[] ch=new char[100];
+            fr.read(ch);
+            fr.close();
+        }
+        catch(FileNotFoundException e){
+            System.out.println("Can`t open file.");
+            System.exit(1);       
+        }
+        catch(IOException e){
+            System.out.println("Can`t read file.");
+            System.exit(1);   
+        }
+    }
+
+    //analysis the input String.
+    private String StartStep(String input){
+        startUI();
+        int count=0;
+        while(true){
+            if(input.contains(":q")){
+                for(int i=0;i<input.length();++i){
+                    if(input.charAt(i)==':'){
+                        String anoinput=input.substring(0, i);
+                        playWithInputString(anoinput);
+                        System.out.println("Game over. Every dream has an end. It`s time to wake up.");
+                        System.exit(1);
+                    }
+                }
+            }
+            else if(input.startsWith("n")) return newgameseed(input);
+            else if(input.startsWith("l")){
+                //wait to be finished.
+                return null;
+            }
+            else{
+                System.out.println("your enter is illegal, please enter one more time.");
+                ++count;
+                if(count>10){
+                    System.out.println("you have mistaken more than 10 times,please restart.");
+                    System.exit(1);
+                } 
+            }
+        }
+    }
+
+    //set seed with the given number. and return executions.
+    private String newgameseed(String input){
         for(int i=1;i<input.length();++i){
             if(input.charAt(i)=='s'){
-                String str=input.substring(1, i);
-                seed=Long.parseLong(str);
-                return;
+                String strnum=input.substring(1, i);
+                String strexec=input.substring(i+1, input.length());
+                seed=Long.parseLong(strnum);
+                return strexec;
             }
         }
         System.out.println("your input doesn`t have char s, please restart.");
         System.exit(1);
+        return null;
     }
 
+    //draw start UI
     private void startUI(){
         StdDraw.setCanvasSize(WIDTH*16, HEIGHT*16);
         StdDraw.clear(StdDraw.BLACK);
@@ -176,7 +233,7 @@ public class Game {
     }
 
     //change static constants to make player move.
-    private void playermove(TETile[][] world,int ch){
+    private void playermove(TETile[][] world,char ch){
         if('w'!=ch&&'a'!=ch&&'s'!=ch&&'d'!=ch){
             System.out.println("illegal instruction, please enter one more time.");
             return;
@@ -538,7 +595,7 @@ public class Game {
 
     public static void main(String[] args){
         Game g=new Game();
-        g.playWithKeyboard();
+        g.playWithInputString("n15645sw");
     }
 
 }

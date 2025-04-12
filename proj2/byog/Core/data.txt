@@ -1,0 +1,4 @@
+seed:15645
+tilenow:nothing
+playerpositionnow[0]:0
+playerpositionnow[1]:1
