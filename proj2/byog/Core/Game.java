@@ -27,6 +27,7 @@ public class Game {
     private static long seed;
     private String dir="E:\\cs61b_da_java\\zdx\\proj2\\byog\\Core\\data.txt";
     private File file=new File(dir);
+    private static String loaddata;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -51,7 +52,7 @@ public class Game {
                         }
                     }
                     String str=new String(ch);
-                    newgameseed(str);
+                    newgameseedexe(str);
                     break;
                 }
                 else if(control=='l'){
@@ -84,6 +85,7 @@ public class Game {
         keyplay(finalWorldFrame);
     }
 
+    //method for using keyboard.
     private void keyplay(TETile[][] world){
         while(true){
             while(StdDraw.hasNextKeyTyped()){
@@ -120,19 +122,15 @@ public class Game {
      * to get the exact same world back again, since this corresponds to loading the saved game.
      */
     public TETile[][] playWithInputString(String input) {
-        String strexecution=StartStep(input);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
-        finalWorldFrame[0][0]=Tileset.PLAYER;
-        playerpostionnow[0]=0;
-        playerpostionnow[1]=0;
-        tilenow=Tileset.NOTHING;
-        mousex=StdDraw.mouseX();
-        mousey=StdDraw.mouseY();
+        String strexecution=StartStep(input);
+        finalWorldFrame[playerpostionnow[0]][playerpostionnow[1]]=Tileset.PLAYER;
         BuildRandomWorld(finalWorldFrame);
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(finalWorldFrame);
         for(int i=0;i<strexecution.length();++i) playermove(finalWorldFrame, strexecution.charAt(i));
+        writedata();
         return finalWorldFrame;
     }
 
@@ -140,10 +138,7 @@ public class Game {
     private void writedata(){
         try{
             FileWriter fw=new FileWriter(file);
-            fw.write("seed:"+seed+'\n');
-            fw.write("tilenow:"+tilenow.description()+'\n');
-            fw.write("playerpositionnow[0]:"+playerpostionnow[0]+'\n');
-            fw.write("playerpositionnow[1]:"+playerpostionnow[1]+'\n');
+            fw.write(tilenow.description()+'\n'+playerpostionnow[0]+'\n'+playerpostionnow[1]+'\n'+seed+'\n');
             fw.flush();
             fw.close();
         }
@@ -153,11 +148,16 @@ public class Game {
         }
     }
 
+    //read datafile.
     private void readdata(){
         try{
             FileReader fr=new FileReader(file);
-            char[] ch=new char[100];
-            fr.read(ch);
+            char[] ch=new char[40];
+            if(fr.read(ch)==0){
+                System.out.println("there is no load here,please start a new game.");
+                System.exit(1);
+            }
+            loaddata(ch);
             fr.close();
         }
         catch(FileNotFoundException e){
@@ -168,6 +168,44 @@ public class Game {
             System.out.println("Can`t read file.");
             System.exit(1);   
         }
+    }
+
+    //load data.
+    private void loaddata(char[] data){
+        int npos=0;
+        int ncount=0;
+        for(int i=0;i<data.length;++i){
+            if(data[i]=='\n'){
+                switch (ncount) {
+                    case 0:
+                        convertchararrtoString(npos, i, data);
+                        if(loaddata.equals(Tileset.NOTHING.description())) tilenow=Tileset.NOTHING;
+                        else if(loaddata.equals(Tileset.FLOOR.description())) tilenow=Tileset.FLOOR;
+                        break;
+                    case 1:
+                        convertchararrtoString(npos, i, data);
+                        playerpostionnow[0]=Integer.parseInt(loaddata);
+                        break;
+                    case 2:
+                        convertchararrtoString(npos, i, data);
+                        playerpostionnow[1]=Integer.parseInt(loaddata);
+                        break;
+                    case 3:
+                        convertchararrtoString(npos, i, data);
+                        seed=Long.parseLong(loaddata);
+                        break;
+                }
+                npos=i+1;
+                ++ncount;
+            }
+        }
+    }
+
+    //helper method.
+    private void convertchararrtoString(int npos,int i,char[] data){
+        char[] ch=new char[i-npos];
+        for(int j=0;j<i-npos;++j) ch[j]=data[npos+j];
+        loaddata=new String(ch);
     }
 
     //analysis the input String.
@@ -185,10 +223,15 @@ public class Game {
                     }
                 }
             }
-            else if(input.startsWith("n")) return newgameseed(input);
+            else if(input.startsWith("n")){
+                playerpostionnow[0]=0;
+                playerpostionnow[1]=0;
+                tilenow=Tileset.NOTHING;
+                return newgameseedexe(input);
+            }
             else if(input.startsWith("l")){
-                //wait to be finished.
-                return null;
+                readdata();
+                return input.substring(1,input.length());
             }
             else{
                 System.out.println("your enter is illegal, please enter one more time.");
@@ -202,7 +245,7 @@ public class Game {
     }
 
     //set seed with the given number. and return executions.
-    private String newgameseed(String input){
+    private String newgameseedexe(String input){
         for(int i=1;i<input.length();++i){
             if(input.charAt(i)=='s'){
                 String strnum=input.substring(1, i);
@@ -595,7 +638,7 @@ public class Game {
 
     public static void main(String[] args){
         Game g=new Game();
-        g.playWithInputString("n15645sw");
+        g.playWithInputString("lwa:q");
     }
 
 }
