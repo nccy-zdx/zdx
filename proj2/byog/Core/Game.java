@@ -638,7 +638,7 @@ public class Game {
 
     public static void main(String[] args){
         Game g=new Game();
-        g.playWithInputString("lwa:q");
+        g.playWithInputString("n123swww");
     }
 
 }
