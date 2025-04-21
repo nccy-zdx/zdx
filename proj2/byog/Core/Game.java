@@ -25,24 +25,36 @@ public class Game {
     private static int[] playerpostionnow=new int[2];
     private static int[] playerpositionfuture=new int[2];
     private static long seed;
-    private String dir="E:\\cs61b_da_java\\zdx\\proj2\\byog\\Core\\data.txt";
-    private File file=new File(dir);
+    private final String dir="E:\\cs61b_da_java\\zdx\\proj2\\byog\\Core\\data.txt";
+    private final File file=new File(dir);
     private static String loaddata;
 
-    /**
-     * Method used for playing a fresh game. The game should start from the main menu.
-     */
+    //Method used for playing a fresh game. The game should start from the main menu.
     public void playWithKeyboard() {
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        intiate(finalWorldFrame);
         startUI();
+        analysisenter(finalWorldFrame);
+        mousex=StdDraw.mouseX();
+        mousey=StdDraw.mouseY();
+        BuildRandomWorld(finalWorldFrame);
+        finalWorldFrame[playerpostionnow[0]][playerpostionnow[1]]=Tileset.PLAYER;
+        ter.initialize(WIDTH, HEIGHT);
+        ter.renderFrame(finalWorldFrame);
+        keyplay(finalWorldFrame);
+    }
+
+    //Just as the StartStep function.
+    private void analysisenter(TETile[][] world){
         int count=0;
         while(true){
             if(StdDraw.hasNextKeyTyped()){
                 char control=StdDraw.nextKeyTyped();
+                char[] ch=new char[40];
+                int i=1;
                 if(control=='n'){
-                    int i=1;
-                    char[] ch=new char[10];
-                    boolean enternum=false;
                     ch[0]='n';
+                    boolean enternum=false;
                     while(!enternum){
                         while(StdDraw.hasNextKeyTyped()){
                             char keytyped=StdDraw.nextKeyTyped();
@@ -53,13 +65,19 @@ public class Game {
                     }
                     String str=new String(ch);
                     newgameseedexe(str);
+                    playerpostionnow[0]=0;
+                    playerpostionnow[1]=0;
+                    tilenow=Tileset.NOTHING;
+                    world[0][0]=Tileset.PLAYER;
                     break;
                 }
                 else if(control=='l'){
+                    readdata();
                     break;
                 }
-                else if(control=='q'){
-                    break;
+                else if(control==':'){
+                    readdata();
+                    quittype();
                 }
                 else{
                     System.out.println("your enter is illegal, please enter one more time.");
@@ -71,18 +89,6 @@ public class Game {
                 }
             }
         }
-        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        intiate(finalWorldFrame);
-        finalWorldFrame[0][0]=Tileset.PLAYER;
-        playerpostionnow[0]=0;
-        playerpostionnow[1]=0;
-        tilenow=Tileset.NOTHING;
-        mousex=StdDraw.mouseX();
-        mousey=StdDraw.mouseY();
-        BuildRandomWorld(finalWorldFrame);
-        ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(finalWorldFrame);
-        keyplay(finalWorldFrame);
     }
 
     //method for using keyboard.
@@ -91,19 +97,7 @@ public class Game {
             while(StdDraw.hasNextKeyTyped()){
                 char control =StdDraw.nextKeyTyped();
                 if(':'==control){
-                    while(true){
-                        while(StdDraw.hasNextKeyTyped()){
-                            char cont=StdDraw.nextKeyTyped();
-                            if('q'==cont){
-                                System.out.println("Game over. Every dream has an end. It`s time to wake up.");
-                                System.exit(1);
-                            }
-                            else{
-                                System.out.println("illegal instruction : without q, please enter one more time");
-                                break;
-                            }
-                        }
-                    }
+                    while(true) quittype();
                 }
                 else playermove(world, control);
             }
@@ -111,22 +105,32 @@ public class Game {
         }
     }
 
-    /**
-     * Method used for autograding and testing the game code. The input string will be a series
-     * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
-     * behave exactly as if the user typed these characters into the game after playing
-     * playWithKeyboard. If the string ends in ":q", the same world should be returned as if the
-     * string did not end with q. For example "n123sss" and "n123sss:q" should return the same
-     * world. However, the behavior is slightly different. After playing with "n123sss:q", the game
-     * should save, and thus if we then called playWithInputString with the string "l", we'd expect
-     * to get the exact same world back again, since this corresponds to loading the saved game.
-     */
+    //helper method.
+    private void quittype(){
+        while(true){
+            while(StdDraw.hasNextKeyTyped()){
+                char cont=StdDraw.nextKeyTyped();
+                if('q'==cont){
+                    writedata();
+                    System.out.println("Game over. Every dream has an end. It`s time to wake up.");
+                    System.exit(1);
+                }
+                else{
+                    System.out.println("illegal instruction : without q, please enter one more time");
+                    break;
+                }
+            }
+        }
+    }
+
+    //Method used for autograding and testing the game code. 
     public TETile[][] playWithInputString(String input) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         intiate(finalWorldFrame);
-        String strexecution=StartStep(input);
-        finalWorldFrame[playerpostionnow[0]][playerpostionnow[1]]=Tileset.PLAYER;
+        startUI();
+        String strexecution=StartStep(input,finalWorldFrame);
         BuildRandomWorld(finalWorldFrame);
+        finalWorldFrame[playerpostionnow[0]][playerpostionnow[1]]=Tileset.PLAYER;
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(finalWorldFrame);
         for(int i=0;i<strexecution.length();++i) playermove(finalWorldFrame, strexecution.charAt(i));
@@ -153,7 +157,7 @@ public class Game {
         try{
             FileReader fr=new FileReader(file);
             char[] ch=new char[40];
-            if(fr.read(ch)==0){
+            if(fr.read(ch)==-1){
                 System.out.println("there is no load here,please start a new game.");
                 System.exit(1);
             }
@@ -170,7 +174,7 @@ public class Game {
         }
     }
 
-    //load data.
+    //load data. What are you writing???
     private void loaddata(char[] data){
         int npos=0;
         int ncount=0;
@@ -181,6 +185,7 @@ public class Game {
                         convertchararrtoString(npos, i, data);
                         if(loaddata.equals(Tileset.NOTHING.description())) tilenow=Tileset.NOTHING;
                         else if(loaddata.equals(Tileset.FLOOR.description())) tilenow=Tileset.FLOOR;
+                        else if(loaddata.equals(Tileset.UNLOCKED_DOOR.description())) tilenow=Tileset.UNLOCKED_DOOR;
                         break;
                     case 1:
                         convertchararrtoString(npos, i, data);
@@ -209,14 +214,13 @@ public class Game {
     }
 
     //analysis the input String.
-    private String StartStep(String input){
-        startUI();
+    private String StartStep(String input,TETile[][] world){
         int count=0;
         while(true){
             if(input.contains(":q")){
                 for(int i=0;i<input.length();++i){
                     if(input.charAt(i)==':'){
-                        String anoinput=input.substring(0, i);
+                        String anoinput=input.substring(0, i);  //String that quits ":q".
                         playWithInputString(anoinput);
                         System.out.println("Game over. Every dream has an end. It`s time to wake up.");
                         System.exit(1);
@@ -227,6 +231,7 @@ public class Game {
                 playerpostionnow[0]=0;
                 playerpostionnow[1]=0;
                 tilenow=Tileset.NOTHING;
+                world[0][0]=Tileset.PLAYER;
                 return newgameseedexe(input);
             }
             else if(input.startsWith("l")){
@@ -442,7 +447,7 @@ public class Game {
         return false;
     }
 
-    //room should be connect.otherwise you can`t go into it,right?
+    //room should be connect.otherwise you can`t go into it,right? one work function.
     private void connect_rooms(long s,int[] data,TETile[][] world){
         if(!canroomconnect(data, world)) return;
         Random r=new Random(s);
@@ -520,14 +525,14 @@ public class Game {
                     if(world[i][j]!=Tileset.NOTHING) return true;
                 }
             }
-        }
+        }//vertical hallway.
         else if((data[1]==0)&&(data[2]+data[0]<WIDTH-1)){
             for(int i=data[3];i<data[3]+3;++i){
                 for(int j=data[2]+1;j<data[2]+data[0]-1;++j){
                     if(world[j][i]!=Tileset.NOTHING) return true;
                 }
             }
-        }
+        }//horizontal hallway.
         return false;
     }
 
@@ -556,6 +561,7 @@ public class Game {
     private void drawhorizontalhallway(int[] data,TETile[][] world){
         for(int a=data[2];a<data[2]+data[0];++a){
             for(int b=data[3];b<data[3]+3;++b){
+                if(world[a][b].equals(Tileset.PLAYER)) continue;
                 if(b==data[3]+1){
                     if(a==data[2]||a==data[2]+data[0]-1){
                         Random r=new Random(a);
@@ -619,12 +625,12 @@ public class Game {
     //hallway should connect room or hallway with room or hallway.
     private boolean connect(int[] data, TETile[][] world){
         if(data[1]==1){
-            if((data[3]!=0&&world[data[2]+1][data[3]-1]==Tileset.FLOOR)&&
-            (data[3]!=HEIGHT-3&&world[data[2]+1][data[3]+data[0]]==Tileset.FLOOR)) return true;
+            if(((data[3]!=0&&world[data[2]+1][data[3]-1]==Tileset.FLOOR))&&
+            ((data[3]!=HEIGHT-3&&world[data[2]+1][data[3]+data[0]]==Tileset.FLOOR))) return true;
         }//vertical hallway
         else{
-            if((data[2]!=0&&world[data[2]-1][data[3]+1]==Tileset.FLOOR)&&
-            (data[2]!=WIDTH-3&&world[data[2]+data[0]][data[3]+1]==Tileset.FLOOR)) return true;
+            if(((data[2]!=0&&world[data[2]-1][data[3]+1]==Tileset.FLOOR))&&
+            ((data[2]!=WIDTH-3&&world[data[2]+data[0]][data[3]+1]==Tileset.FLOOR))) return true;
         }//horizontal hallway
         return false;
     }
@@ -634,11 +640,6 @@ public class Game {
         for(int x=0;x<WIDTH;++x){
             for(int y=0;y<HEIGHT;++y) world[x][y]=Tileset.NOTHING;
         }
-    }
-
-    public static void main(String[] args){
-        Game g=new Game();
-        g.playWithInputString("n123swww");
     }
 
 }

@@ -7,6 +7,7 @@ import byog.TileEngine.TETile;
  *  in either keyboard or input string mode.
  */
 public class Main {
+    
     public static void main(String[] args) {
         if (args.length > 1) {
             System.out.println("Can only have one argument - the input string");
@@ -21,4 +22,5 @@ public class Main {
         }
 
     }
+
 }
