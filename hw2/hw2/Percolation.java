@@ -5,7 +5,9 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private WeightedQuickUnionUF set;
     private int[][] data;
-    private static int count;
+    private int count;
+    private int[] num;
+    private int numcount;
 
     //O(N^2), 0 presents that it`s blocked, while 1 means opened. Initialize it with blocked.
     public Percolation(int N){
@@ -16,6 +18,8 @@ public class Percolation {
         data=new int[N][N];
         set=new WeightedQuickUnionUF(N*N);
         count=0;
+        num=new int[N];
+        numcount=0;
         for(int i=0;i<N;++i){
             for(int j=0;j<N;++j){
                 data[i][j]=0;
@@ -35,6 +39,10 @@ public class Percolation {
     public void open(int row,int col){
         checkexception(row, col);
         if(data[row][col]==1) return;
+        if(row==0){
+            num[numcount]=col;
+            ++numcount;
+        }
         data[row][col]=1;
         ++count;//annoying judge below.
         if(col!=data[0].length-1&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
@@ -52,11 +60,16 @@ public class Percolation {
     //check if it`s near other opens. If it is. Union them and check if a open site is a full site.
     public boolean isFull(int row,int col){
         checkexception(row, col);
-        if(!isOpen(row, col)) return false; //if it`s not open, return.
+        if(data[row][col]!=1) return false; //if it`s not open, return.
         if(row==0) return true;
-        for(int i=0;i<data[0].length;++i){
-            if(set.connected(row*data[0].length+col, i)) return true;
+        for(int i=0;i<numcount;++i){
+            if(set.connected(row*data[0].length+col, num[i])) return true;
         }
+        /*for(int i=0;i<data[0].length;++i){
+            if(data[0][i]==1){
+                if(set.connected(row*data[0].length+col, i)) return true;
+            }
+        }*/
         return false;
     }
 
