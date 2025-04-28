@@ -12,6 +12,7 @@ public class Percolation {
     private int[] bottom;
     private int bottomcount;
     private final int Length;
+    private boolean isPercolate;
 
     //O(N^2), 0 presents that it`s blocked, while 1 means opened. Initialize it with blocked.
     public Percolation(int N){
@@ -23,6 +24,7 @@ public class Percolation {
         set=new WeightedQuickUnionUF(N*N);
         num=new int[N];
         bottom=new int[N];
+        isPercolate=false;
         Length=N-1;
         count=0;
         numcount=0;
@@ -86,12 +88,18 @@ public class Percolation {
     }
 
     //check if percolates.Why there are so many bugs? Why?
-    public boolean percolates(){//Ican`t bear any more!!! I just subtract a redundant 1..... 
-        if(count<Length+1) return false;
+    public boolean percolates(){//I can`t bear any more!!! I just subtract a redundant 1.....  now deleted.
+        if(isPercolate) return true;
         for(int i=0;i<bottomcount;++i){
-            if(isFull(Length, bottom[i])) return true;
+            iden=set.find(Length*data[0].length+bottom[i]);
+            for(int j=0;j<numcount;++j){
+                if(iden==set.find(num[j])){
+                    isPercolate=true;
+                    return true;
+                }
+            }
         }
-        return false;
+        return isPercolate;
     }
 
     public static void main(String[] args) {
