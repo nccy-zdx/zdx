@@ -34,8 +34,9 @@ public class Percolation {
     //open the site.
     public void open(int row,int col){
         checkexception(row, col);
+        if(data[row][col]==1) return;
         data[row][col]=1;
-        ++count;
+        ++count;//annoying judge below.
         if(col!=data[0].length-1&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
         if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
         if(row!=data[0].length-1&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
@@ -52,7 +53,7 @@ public class Percolation {
     public boolean isFull(int row,int col){
         checkexception(row, col);
         if(!isOpen(row, col)) return false; //if it`s not open, return.
-        if(row==0) return true;//annoying judge below.
+        if(row==0) return true;
         for(int i=0;i<data[0].length;++i){
             if(set.connected(row*data[0].length+col, i)) return true;
         }

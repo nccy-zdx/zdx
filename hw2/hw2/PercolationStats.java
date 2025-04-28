@@ -3,7 +3,7 @@ package hw2;
 import edu.princeton.cs.introcs.StdRandom;
 
 public class PercolationStats {
-    private static Percolation p;
+    private static Percolation p[];
     private final int T;
     private int N;
     private static double sT;
@@ -12,14 +12,15 @@ public class PercolationStats {
     private static double sigma=0;
 
     public PercolationStats(int N,int T,PercolationFactory pf){
-        p=pf.make(N);
+        p=new Percolation[T];
+        for(int i=0;i<T;++i) p[i]=pf.make(N);
         this.T=T;
         this.N=N;
         data=new double[T];
         sT=Math.sqrt(T);
     }
 
-    private double experiment(){
+    private double experiment(Percolation p){
         int count;
         for(count=0;count<N*N;++count){
             int i=StdRandom.uniform(0, N-1);
@@ -31,7 +32,7 @@ public class PercolationStats {
     }
 
     public double mean(){
-        for(int i=0;i<T;++i) data[i]=experiment();
+        for(int i=0;i<T;++i) data[i]=experiment(p[i]);
         for(int i=0;i<data.length;++i) u+=data[i];
         u=u/T;
         return u;
