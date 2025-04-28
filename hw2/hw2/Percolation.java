@@ -11,6 +11,7 @@ public class Percolation {
     private int iden;
     private int[] bottom;
     private int bottomcount;
+    private final int Length;
 
     //O(N^2), 0 presents that it`s blocked, while 1 means opened. Initialize it with blocked.
     public Percolation(int N){
@@ -22,6 +23,7 @@ public class Percolation {
         set=new WeightedQuickUnionUF(N*N);
         num=new int[N];
         bottom=new int[N];
+        Length=N-1;
         count=0;
         numcount=0;
         bottomcount=0;
@@ -34,7 +36,7 @@ public class Percolation {
 
     //helper method to save space.
     private void checkexception(int row, int col){
-        if(row>data[0].length-1||col>data[0].length-1||row<0||col<0){
+        if(row>Length||col>Length||row<0||col<0){
             IndexOutOfBoundsException e=new IndexOutOfBoundsException();
             throw e;
         }
@@ -48,15 +50,15 @@ public class Percolation {
             num[numcount]=col;
             ++numcount;
         }
-        if(row==data[0].length-1){
+        if(row==Length){
             bottom[bottomcount]=col;
             ++bottomcount;
         }
         data[row][col]=1;
         ++count;//annoying judge below.
-        if(col!=data[0].length-1&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
+        if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
         if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
-        if(row!=data[0].length-1&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
+        if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
         if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
     }
 
@@ -75,11 +77,6 @@ public class Percolation {
         for(int i=0;i<numcount;++i){
             if(iden==set.find(num[i])) return true;
         }
-        /*for(int i=0;i<data[0].length;++i){
-            if(data[0][i]==1){
-                if(set.connected(row*data[0].length+col, i)) return true;
-            }
-        }*/
         return false;
     }
 
@@ -90,8 +87,9 @@ public class Percolation {
 
     //check if percolates.Why there are so many bugs? Why?
     public boolean percolates(){//Ican`t bear any more!!! I just subtract a redundant 1..... 
+        if(count<Length+1) return false;
         for(int i=0;i<bottomcount;++i){
-            if(isFull(data[0].length-1, bottom[i])) return true;
+            if(isFull(Length, bottom[i])) return true;
         }
         return false;
     }
