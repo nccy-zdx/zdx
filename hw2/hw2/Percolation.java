@@ -65,9 +65,9 @@ public class Percolation {
         return count;
     }
 
-    //check if percolates.
+    //check if percolates.Why there are so many bugs? Why?
     public boolean percolates(){
-        for(int i=0;i<data[0].length-1;++i){
+        for(int i=0;i<data[0].length;++i){//Ican`t bear any more!!! I just subtract a redundant 1..... 
             if(isFull(data[0].length-1, i)) return true;
         }
         return false;
