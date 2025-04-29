@@ -45,7 +45,7 @@ public class Percolation {
         if(data[row][col]==1) return;   //avoid repeated case.
         data[row][col]=1;  //set it to open.
         ++count; //updata counter.
-        /*if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
+        if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
         if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
         if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
         if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper*/
@@ -64,7 +64,7 @@ public class Percolation {
         }
     }
 
-    //for transport.
+    //for transport. Recursion.
     private void union_full(int row,int col){
         fulldata[row][col]=1;
         if(row==Length&&!isPercolate) isPercolate=true;
