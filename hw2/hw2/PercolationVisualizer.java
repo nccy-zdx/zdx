@@ -72,14 +72,14 @@ public class PercolationVisualizer {
         draw(perc, N);
         StdDraw.show();
         try{
-            Thread.sleep(DELAY);
+            //Thread.sleep(DELAY);
             while (!in.isEmpty()) {
                 int i = in.readInt();
                 int j = in.readInt();
                 perc.open(i, j);
                 draw(perc, N);
                 StdDraw.show();
-                Thread.sleep(DELAY);
+                //Thread.sleep(DELAY);
             }
         }
         catch(Exception e){
@@ -89,7 +89,7 @@ public class PercolationVisualizer {
     }
 
     public static void main(String[] args) {
-        String filename = "inputFiles/jerry47.txt";
+        String filename = "inputFiles/input20.txt";
         simulateFromFile(filename);
     }
 }
