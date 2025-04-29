@@ -4,10 +4,10 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private WeightedQuickUnionUF set;
-    private int[][] data;
-    private int[][] fulldata;
-    private int count;
-    private final int Length;
+    private int[][] data; //record opendata with 1
+    private int[][] fulldata; //record fulldata with 1.
+    private int count;   //record the number of open
+    private final int Length; //N-1
     private boolean isPercolate;
     
     //sacrifice space for time.
@@ -32,7 +32,7 @@ public class Percolation {
     }
 
     //helper method to save space.
-    private void checkexception(int row, int col){
+    private void checkException(int row, int col){
         if(row>Length||col>Length||row<0||col<0){
             IndexOutOfBoundsException e=new IndexOutOfBoundsException();
             throw e;
@@ -41,49 +41,49 @@ public class Percolation {
 
     //open the site. O(1). how to implement update?
     public void open(int row,int col){
-        checkexception(row, col);
-        if(data[row][col]==1) return;   //avoid duplicate case.
-        if(row==0){
-            fulldata[0][col]=1;
-            if(data[0].length==1) isPercolate=true;
-        } //open top line is always full
+        checkException(row, col);
+        if(data[row][col]==1) return;   //avoid repeated case.
         data[row][col]=1;  //set it to open.
         ++count; //updata counter.
-        //if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
-        //if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
-        //if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
-        //if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
+        /*if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
+        if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
+        if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
+        if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper*/
+        if(row==0){
+            if(data[0].length==1) isPercolate=true;
+            union_full(row, col);
+        } //top open is always full.
+        else{
+            if(col!=Length&&fulldata[row][col+1]==1) union_full(row, col); //right
+            else if(col!=0&&fulldata[row][col-1]==1) union_full(row, col); //left
+            else if(row!=Length&&fulldata[row+1][col]==1) union_full(row, col); //down
+            else if(row!=0&&fulldata[row-1][col]==1){
+                if(row==Length) isPercolate=true;
+                union_full(row, col); 
+            } //upper
+        }
+    }
+
+    //for transport.
+    private void union_full(int row,int col){
+        fulldata[row][col]=1;
+        if(row==Length&&!isPercolate) isPercolate=true;
+        if(col!=Length&&data[row][col+1]==1&&fulldata[row][col+1]!=1) union_full(row, col+1); //right
+        if(col!=0&&data[row][col-1]==1&&fulldata[row][col-1]!=1) union_full(row, col-1); //left
+        if(row!=Length&&data[row+1][col]==1&&fulldata[row+1][col]!=1) union_full(row+1, col); //down
+        if(row!=0&&data[row-1][col]==1&&fulldata[row-1][col]!=1) union_full(row-1, col);  //upper
     }
 
     //check if site is open. O(1).
     public boolean isOpen(int row,int col){
-        checkexception(row, col);
+        checkException(row, col);
         return data[row][col]==1;
     }
 
     //check if it`s near other opens. If it is. Union them and check if a open site is a full site. O(N).
     public boolean isFull(int row,int col){
-        checkexception(row, col);
-        if(fulldata[row][col]==1) return true; //fulldata==1 means it`s full, so don`t need to do one more time.
-        if(data[row][col]!=1) return false; //if it`s not open, return.
-        if(col!=Length&&fulldata[row][col+1]==1){
-            fulldata[row][col]=1;
-            return true;  
-        } //right
-        else if(col!=0&&fulldata[row][col-1]==1){
-            fulldata[row][col]=1;
-            return true;
-        } //left
-        else if(row!=Length&&fulldata[row+1][col]==1){
-            fulldata[row][col]=1;
-            return true;  
-        } //down
-        else if(row!=0&&fulldata[row-1][col]==1){
-            fulldata[row][col]=1;
-            if(!isPercolate&&row==Length) isPercolate=true;
-            return true;  
-        } //upper
-        return false;
+        checkException(row, col);
+        return fulldata[row][col]==1;
     }
 
     //return number of open sites whether it`s a full site or not. O(1).
