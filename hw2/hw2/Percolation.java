@@ -5,15 +5,12 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private WeightedQuickUnionUF set;
     private int[][] data;
+    private int[][] fulldata;
     private int count;
-    private int[] upper;
-    private int uppercount;
-    private int[] bottom;
-    private int bottomcount;
-    private int iden;
     private final int Length;
     private boolean isPercolate;
-
+    
+    //sacrifice space for time.
     //O(N^2), 0 presents that it`s blocked, while 1 means opened. Initialize it with blocked.
     public Percolation(int N){
         if(N<=0){
@@ -21,17 +18,15 @@ public class Percolation {
             throw e;
         }
         data=new int[N][N];
+        fulldata=new int[N][N];
         set=new WeightedQuickUnionUF(N*N);
-        upper=new int[N];
-        bottom=new int[N];
         isPercolate=false;
         Length=N-1;
         count=0;
-        uppercount=0;
-        bottomcount=0;
         for(int i=0;i<N;++i){
             for(int j=0;j<N;++j){
                 data[i][j]=0;
+                fulldata[i][j]=0;
             }
         }
     }
@@ -44,24 +39,20 @@ public class Percolation {
         }
     } 
 
-    //open the site. O(1).
+    //open the site. O(1). how to implement update?
     public void open(int row,int col){
         checkexception(row, col);
-        if(data[row][col]==1&&data[row+1][col]==1) return;
+        if(data[row][col]==1) return;   //avoid duplicate case.
         if(row==0){
-            upper[uppercount]=col;
-            ++uppercount;
-        }
-        /*if(row==Length&&data[row-1][col]==1){
-            bottom[bottomcount]=col;
-            ++bottomcount;
-        }*/
-        data[row][col]=1;
-        ++count;//annoying judge below.
-        if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
-        if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
-        if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
-        if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
+            fulldata[0][col]=1;
+            if(data[0].length==1) isPercolate=true;
+        } //open top line is always full
+        data[row][col]=1;  //set it to open.
+        ++count; //updata counter.
+        //if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
+        //if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
+        //if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
+        //if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
     }
 
     //check if site is open. O(1).
@@ -73,15 +64,25 @@ public class Percolation {
     //check if it`s near other opens. If it is. Union them and check if a open site is a full site. O(N).
     public boolean isFull(int row,int col){
         checkexception(row, col);
+        if(fulldata[row][col]==1) return true; //fulldata==1 means it`s full, so don`t need to do one more time.
         if(data[row][col]!=1) return false; //if it`s not open, return.
-        if(row==0) return true;
-        iden=set.find(row*data[0].length+col);
-        for(int i=0;i<uppercount;++i){
-            if(iden==set.find(upper[i])){
-                if(!isPercolate&&row==Length) isPercolate=true;
-                return true;
-            }
-        }
+        if(col!=Length&&fulldata[row][col+1]==1){
+            fulldata[row][col]=1;
+            return true;  
+        } //right
+        else if(col!=0&&fulldata[row][col-1]==1){
+            fulldata[row][col]=1;
+            return true;
+        } //left
+        else if(row!=Length&&fulldata[row+1][col]==1){
+            fulldata[row][col]=1;
+            return true;  
+        } //down
+        else if(row!=0&&fulldata[row-1][col]==1){
+            fulldata[row][col]=1;
+            if(!isPercolate&&row==Length) isPercolate=true;
+            return true;  
+        } //upper
         return false;
     }
 
@@ -91,18 +92,9 @@ public class Percolation {
     }
 
     //check if percolates. O(N^2). Needed to be improved to at least O(N).Now O(1).
-    public boolean percolates(){//I can`t bear any more!!! I just subtract a redundant 1.....  now deleted.        
-        /*for(int i=0;i<bottomcount;++i){
-            iden=set.find(Length*data[0].length+bottom[i]);
-            for(int j=0;j<uppercount;++j){
-                if(iden==set.find(upper[j])){
-                    isPercolate=true;
-                    return true;
-                }
-            }
-        }*///tell me how to do!!!
+    public boolean percolates(){      
         return isPercolate;
-    }//aaaaaaaaaaaaaaa,I can`t figure it out. how to do???
+    }
 
     public static void main(String[] args) {
         //just for test.
