@@ -10,7 +10,7 @@ public class Percolation {
     private final int Length; //N-1
     private boolean isPercolate;
     
-    //sacrifice space for time.
+    //sacrifice space for time.Change your mind.
     //O(N^2), 0 presents that it`s blocked, while 1 means opened. Initialize it with blocked.
     public Percolation(int N){
         if(N<=0){
@@ -45,7 +45,7 @@ public class Percolation {
         if(data[row][col]==1) return;   //avoid repeated case.
         data[row][col]=1;  //set it to open.
         ++count; //updata counter.
-        if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
+        /*if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
         if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
         if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
         if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper*/
@@ -80,7 +80,7 @@ public class Percolation {
         return data[row][col]==1;
     }
 
-    //check if it`s near other opens. If it is. Union them and check if a open site is a full site. O(N).
+    //check if it`s near other opens. If it is. Union them and check if a open site is a full site. O(N).Now O(1).
     public boolean isFull(int row,int col){
         checkException(row, col);
         return fulldata[row][col]==1;
