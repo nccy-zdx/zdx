@@ -6,11 +6,11 @@ public class Percolation {
     private WeightedQuickUnionUF set;
     private int[][] data;
     private int count;
-    private int[] num;
-    private int numcount;
-    private int iden;
+    private int[] upper;
+    private int uppercount;
     private int[] bottom;
     private int bottomcount;
+    private int iden;
     private final int Length;
     private boolean isPercolate;
 
@@ -22,12 +22,12 @@ public class Percolation {
         }
         data=new int[N][N];
         set=new WeightedQuickUnionUF(N*N);
-        num=new int[N];
+        upper=new int[N];
         bottom=new int[N];
         isPercolate=false;
         Length=N-1;
         count=0;
-        numcount=0;
+        uppercount=0;
         bottomcount=0;
         for(int i=0;i<N;++i){
             for(int j=0;j<N;++j){
@@ -44,18 +44,18 @@ public class Percolation {
         }
     } 
 
-    //open the site.
+    //open the site. O(1).
     public void open(int row,int col){
         checkexception(row, col);
-        if(data[row][col]==1) return;
+        if(data[row][col]==1&&data[row+1][col]==1) return;
         if(row==0){
-            num[numcount]=col;
-            ++numcount;
+            upper[uppercount]=col;
+            ++uppercount;
         }
-        if(row==Length){
+        /*if(row==Length&&data[row-1][col]==1){
             bottom[bottomcount]=col;
             ++bottomcount;
-        }
+        }*/
         data[row][col]=1;
         ++count;//annoying judge below.
         if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1);  //right
@@ -64,43 +64,45 @@ public class Percolation {
         if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
     }
 
-    //check if site is open.
+    //check if site is open. O(1).
     public boolean isOpen(int row,int col){
         checkexception(row, col);
         return data[row][col]==1;
     }
 
-    //check if it`s near other opens. If it is. Union them and check if a open site is a full site.
+    //check if it`s near other opens. If it is. Union them and check if a open site is a full site. O(N).
     public boolean isFull(int row,int col){
         checkexception(row, col);
         if(data[row][col]!=1) return false; //if it`s not open, return.
         if(row==0) return true;
         iden=set.find(row*data[0].length+col);
-        for(int i=0;i<numcount;++i){
-            if(iden==set.find(num[i])) return true;
+        for(int i=0;i<uppercount;++i){
+            if(iden==set.find(upper[i])){
+                if(!isPercolate&&row==Length) isPercolate=true;
+                return true;
+            }
         }
         return false;
     }
 
-    //return number of open sites whether it`s a full site or not.
+    //return number of open sites whether it`s a full site or not. O(1).
     public int numberOfOpenSites(){
         return count;
     }
 
-    //check if percolates.Why there are so many bugs? Why?
-    public boolean percolates(){//I can`t bear any more!!! I just subtract a redundant 1.....  now deleted.
-        if(isPercolate) return true;
-        for(int i=0;i<bottomcount;++i){
+    //check if percolates. O(N^2). Needed to be improved to at least O(N).Now O(1).
+    public boolean percolates(){//I can`t bear any more!!! I just subtract a redundant 1.....  now deleted.        
+        /*for(int i=0;i<bottomcount;++i){
             iden=set.find(Length*data[0].length+bottom[i]);
-            for(int j=0;j<numcount;++j){
-                if(iden==set.find(num[j])){
+            for(int j=0;j<uppercount;++j){
+                if(iden==set.find(upper[j])){
                     isPercolate=true;
                     return true;
                 }
             }
-        }
+        }*///tell me how to do!!!
         return isPercolate;
-    }
+    }//aaaaaaaaaaaaaaa,I can`t figure it out. how to do???
 
     public static void main(String[] args) {
         //just for test.
