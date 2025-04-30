@@ -25,7 +25,7 @@ public class PercolationStats {
         sigma=0;
         for(int i=0;i<T;++i){
             Percolation p=pf.make(N);
-            for(int count=0;count<N*N;++count){
+            for(;p.numberOfOpenSites()<N*N;){
                 k=StdRandom.uniform(0, N);
                 j=StdRandom.uniform(0, N);
                 p.open(k, j);
@@ -58,10 +58,11 @@ public class PercolationStats {
     }
 
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         PercolationFactory pf=new PercolationFactory();
-        PercolationStats ps=new PercolationStats(20, 10, pf);
+        PercolationStats ps=new PercolationStats(20, 10000, pf);
         System.out.println(ps.confidenceHigh());
         System.out.println(ps.confidenceLow());
+        System.out.println(ps.mean());
     }//just for test.*/
 }
