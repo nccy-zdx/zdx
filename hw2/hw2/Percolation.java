@@ -3,8 +3,8 @@ package hw2;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private WeightedQuickUnionUF setabove;
-    private WeightedQuickUnionUF setbelow;
+    private WeightedQuickUnionUF setabove; 
+    private WeightedQuickUnionUF setbelow; 
     private int[][] data; //record opendata with 1
     private int count;   //record the number of open
     private final int Length; //N-1
@@ -73,7 +73,7 @@ public class Percolation {
         return count;
     }
 
-    //check if percolates. O(N^2). Needed to be improved to at least O(N).Now O(1).Now O(N)....,Now O(1). All O(1).wuwu
+    //check if percolates. O(N^2). Needed to be improved to at least O(N).Now O(1).Now O(N)....,Now O(1). All O(1) wuwu.
     public boolean percolates(){
         return setabove.connected((Length+1)*(Length+1), (Length+1)*(Length+1)+1);
     }

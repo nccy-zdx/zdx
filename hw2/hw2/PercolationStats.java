@@ -3,21 +3,35 @@ package hw2;
 import edu.princeton.cs.introcs.StdRandom;
 
 public class PercolationStats {
-    private static Percolation p[];
-    private final int T;
+    private  Percolation p[];
+    private final int T; //repetitive time.
     private int N;
-    private static double sT;
-    private static double[] data;
-    private static double u=0;
-    private static double sigma=0;
+    private double sqrtT; //sqrt of T.
+    private double[] data; //collect experiment data.
+    private double u; //average
+    private double sigma; //standard deviation.
 
     public PercolationStats(int N,int T,PercolationFactory pf){
+        if(N<=0||T<=0){
+            IllegalArgumentException e=new IllegalArgumentException();
+            throw e;
+        }
         p=new Percolation[T];
-        for(int i=0;i<T;++i) p[i]=pf.make(N);
         this.T=T;
         this.N=N;
         data=new double[T];
-        sT=Math.sqrt(T);
+        sqrtT=Math.sqrt(T);
+        u=0;
+        sigma=0;
+        for(int i=0;i<T;++i){
+            p[i]=pf.make(N);
+            data[i]=experiment(p[i]);
+            u+=data[i];
+        }
+        u/=T;
+        for(int i=0;i<T;++i) sigma+=(data[i]-u)*(data[i]-u);
+        sigma/=(T-1);
+        sigma=Math.sqrt(sigma);
     }
 
     private double experiment(Percolation p){
@@ -32,27 +46,19 @@ public class PercolationStats {
     }
 
     public double mean(){
-        for(int i=0;i<T;++i) data[i]=experiment(p[i]);
-        for(int i=0;i<data.length;++i) u+=data[i];
-        u=u/T;
         return u;
     }
 
     public double stddev(){
-        if(u==0) u=mean();
-        for(int i=0;i<data.length;++i){
-            sigma+=(data[i]-u)*(data[i]-u);
-        }
-        sigma/=(T-1);
         return sigma;
     }
 
     public double confidenceLow(){
-        return u-1.96*sigma/sT;
+        return u-1.96*sigma/sqrtT;
     }
 
     public double confidenceHigh(){
-        return u+1.96*sigma/sT;
+        return u+1.96*sigma/sqrtT;
     }
 
 }
