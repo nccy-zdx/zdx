@@ -5,11 +5,9 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private WeightedQuickUnionUF set;
     private int[][] data; //record opendata with 1
-    //private int[][] fulldata; //record fulldata with 1. Used for Recursion.Discarded.
     private int count;   //record the number of open
     private final int Length; //N-1
     
-    //sacrifice space for time.Change your mind.
     //O(N^2), 0 presents that it`s blocked, while 1 means opened. Initialize it with blocked.
     public Percolation(int N){
         if(N<=0){
@@ -17,15 +15,11 @@ public class Percolation {
             throw e;
         }
         data=new int[N][N];
-        //fulldata=new int[N][N];
-        set=new WeightedQuickUnionUF(N*N+2);
+        set=new WeightedQuickUnionUF(N*N+1);
         Length=N-1;
         count=0;
         for(int i=0;i<N;++i){
-            for(int j=0;j<N;++j){
-                data[i][j]=0;
-                //fulldata[i][j]=0;
-            }
+            for(int j=0;j<N;++j) data[i][j]=0;
         }
     }
 
@@ -37,59 +31,21 @@ public class Percolation {
         }
     } 
 
-    //Use disjointset,fast.
+    //Use disjointset,fast. O(1).
     public void open(int row,int col){
         checkException(row, col);
         if(data[row][col]==1) return;
         data[row][col]=1;
         ++count;
-        if(row==0) set.union(col, (Length+1)*(Length+1));
         if(col!=Length&&data[row][col+1]!=0) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
         if(col!=0&&data[row][col-1]!=0) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
-        if(row!=Length&&data[row+1][col]!=0) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
         if(row!=0&&data[row-1][col]!=0) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
-        /*if(row==Length){
-            set.find(col);
-        }*/
-        //if(row==Length) set.union((Length+1)*(Length+1)+1, Length*data[0].length+col);
-        for(int i=0;i<data[0].length;++i){
-            if(isFull(Length, i)) set.union((Length+1)*(Length+1)+1, Length*data[0].length+i);
+        else if(row==0) set.union(col, (Length+1)*(Length+1));
+        if(row!=Length&&data[row+1][col]!=0) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
+        else if(row==Length){
+
         }
     }
-
-    //open the site. O(1). how to implement update? Recursion type. Discarded.
-    /*public void open(int row,int col){
-        checkException(row, col);
-        if(data[row][col]==1) return;   //avoid repeated case.
-        data[row][col]=1;  //set it to open.
-        ++count; //updata counter.
-        /*if(col!=Length&&data[row][col+1]==1) set.union(row*data[0].length+col, row*data[0].length+col+1); //right
-        if(col!=0&&data[row][col-1]==1) set.union(row*data[0].length+col, row*data[0].length+col-1); //left
-        if(row!=Length&&data[row+1][col]==1) set.union(row*data[0].length+col, (row+1)*data[0].length+col); //down
-        if(row!=0&&data[row-1][col]==1) set.union(row*data[0].length+col, (row-1)*data[0].length+col); //upper
-        if(row==0){
-            if(data[0].length==1) isPercolate=true;
-            union_full(row, col);
-        } //top open is always full.
-        else{
-            if(col!=Length&&fulldata[row][col+1]==1) union_full(row, col); //right
-            else if(col!=0&&fulldata[row][col-1]==1) union_full(row, col); //left
-            else if(row!=Length&&fulldata[row+1][col]==1) union_full(row, col); //down
-            else if(row!=0&&fulldata[row-1][col]==1){
-                if(row==Length) isPercolate=true;
-                union_full(row, col); 
-            } //upper
-        }
-    }*/
-    //for transport. Recursion.
-    /*private void union_full(int row,int col){
-        fulldata[row][col]=1;
-        if(row==Length&&!isPercolate) isPercolate=true;
-        if(col!=Length&&data[row][col+1]==1&&fulldata[row][col+1]!=1) union_full(row, col+1); //right
-        if(col!=0&&data[row][col-1]==1&&fulldata[row][col-1]!=1) union_full(row, col-1); //left
-        if(row!=Length&&data[row+1][col]==1&&fulldata[row+1][col]!=1) union_full(row+1, col); //down
-        if(row!=0&&data[row-1][col]==1&&fulldata[row-1][col]!=1) union_full(row-1, col);  //upper
-    }*/
 
     //check if site is open. O(1).
     public boolean isOpen(int row,int col){
@@ -108,12 +64,17 @@ public class Percolation {
         return count;
     }
 
-    //check if percolates. O(N^2). Needed to be improved to at least O(N).Now O(1).
-    public boolean percolates(){      
-        return set.connected((Length+1)*(Length+1), (Length+1)*(Length+1)+1);
+    //check if percolates. O(N^2). Needed to be improved to at least O(N).Now O(1).Now O(N)....
+    public boolean percolates(){
+        int id=set.find((Length+1)*(Length+1));
+        int idbottom;
+        for(int i=0;i<data[0].length;++i){
+            idbottom=set.find(Length*data[0].length+i);
+            if(id==idbottom) return true;
+        }
+        return false;
     }
 
-    public static void main(String[] args) {
-        //just for test.
+    public static void main(String[] args) { //just for test. 
     }
 }
