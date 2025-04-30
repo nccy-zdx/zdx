@@ -9,6 +9,8 @@ public class PercolationStats {
     private double[] data; //collect experiment data.
     private double u; //average
     private double sigma; //standard deviation.
+    private int j;
+    private int k;
 
     public PercolationStats(int N,int T,PercolationFactory pf){
         if(N<=0||T<=0){
@@ -22,7 +24,14 @@ public class PercolationStats {
         u=0;
         sigma=0;
         for(int i=0;i<T;++i){
-            data[i]=experiment(pf.make(N));
+            Percolation p=pf.make(N);
+            for(int count=0;count<N*N;++count){
+                k=StdRandom.uniform(0, N);
+                j=StdRandom.uniform(0, N);
+                p.open(k, j);
+                if(p.percolates()) break;
+            }
+            data[i]=p.numberOfOpenSites();
             data[i]/=(N*N);
             u+=data[i];
         }
@@ -30,17 +39,6 @@ public class PercolationStats {
         for(int i=0;i<T;++i) sigma+=(data[i]-u)*(data[i]-u);
         sigma/=(T-1);
         sigma=Math.sqrt(sigma);
-    }
-
-    private double experiment(Percolation p){
-        int i; int j;
-        for(int count=0;count<N*N;++count){
-            i=StdRandom.uniform(0, N);
-            j=StdRandom.uniform(0, N);
-            p.open(i, j);
-            if(p.percolates()) break;
-        }
-        return p.numberOfOpenSites();
     }
 
     public double mean(){
@@ -60,9 +58,10 @@ public class PercolationStats {
     }
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         PercolationFactory pf=new PercolationFactory();
-        PercolationStats ps=new PercolationStats(10, 20000, pf);
-        System.out.println(ps.mean());
-    }//just for test.
+        PercolationStats ps=new PercolationStats(20, 10, pf);
+        System.out.println(ps.confidenceHigh());
+        System.out.println(ps.confidenceLow());
+    }//just for test.*/
 }
