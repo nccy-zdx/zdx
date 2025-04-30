@@ -4,7 +4,7 @@ import edu.princeton.cs.introcs.StdRandom;
 
 public class PercolationStats {
     private  Percolation p[];
-    private final int T; //repetitive time.
+    private int T; //repetitive time.
     private int N;
     private double sqrtT; //sqrt of T.
     private double[] data; //collect experiment data.
@@ -26,6 +26,7 @@ public class PercolationStats {
         for(int i=0;i<T;++i){
             p[i]=pf.make(N);
             data[i]=experiment(p[i]);
+            data[i]/=(N*N);
             u+=data[i];
         }
         u/=T;
@@ -35,14 +36,13 @@ public class PercolationStats {
     }
 
     private double experiment(Percolation p){
-        int count;
-        for(count=0;count<N*N;++count){
-            int i=StdRandom.uniform(0, N-1);
-            int j=StdRandom.uniform(0, N-1);
+        for(int count=0;count<N*N;++count){
+            int i=StdRandom.uniform(0, N);
+            int j=StdRandom.uniform(0, N);
             p.open(i, j);
             if(p.percolates()) break;
         }
-        return count;
+        return p.numberOfOpenSites();
     }
 
     public double mean(){
@@ -61,4 +61,10 @@ public class PercolationStats {
         return u+1.96*sigma/sqrtT;
     }
 
+
+    public static void main(String[] args) {
+        PercolationFactory pf=new PercolationFactory();
+        PercolationStats ps=new PercolationStats(2, 10000, pf);
+        System.out.println(ps.mean());
+    }
 }
