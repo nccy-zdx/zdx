@@ -36,9 +36,10 @@ public class PercolationStats {
     }
 
     private double experiment(Percolation p){
+        int i; int j;
         for(int count=0;count<N*N;++count){
-            int i=StdRandom.uniform(0, N);
-            int j=StdRandom.uniform(0, N);
+            i=StdRandom.uniform(0, N);
+            j=StdRandom.uniform(0, N);
             p.open(i, j);
             if(p.percolates()) break;
         }
@@ -62,9 +63,9 @@ public class PercolationStats {
     }
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         PercolationFactory pf=new PercolationFactory();
         PercolationStats ps=new PercolationStats(2, 10000, pf);
         System.out.println(ps.mean());
-    }
+    }*///just for test.
 }
