@@ -69,8 +69,10 @@ public class Percolation {
         int id=set.find((Length+1)*(Length+1));
         int idbottom;
         for(int i=0;i<data[0].length;++i){
-            idbottom=set.find(Length*data[0].length+i);
-            if(id==idbottom) return true;
+            if(data[Length][i]==1){
+                idbottom=set.find(Length*data[0].length+i);
+                if(id==idbottom) return true;
+            }
         }
         return false;
     }
