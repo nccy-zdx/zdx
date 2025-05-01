@@ -1,5 +1,6 @@
 package lab9;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -53,19 +54,43 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        return buckets[hash(key)].get(key);
+    }
+
+    private void resize(){
+        Set<K>[] sets=new Set[buckets.length];
+        for(int i=0;i<buckets.length;++i){
+            sets[i]=buckets[i].keySet();
+        }
+        ArrayMap<K, V>[] resizebuckets =new ArrayMap[buckets.length*3];
+        for(int i=0;i<resizebuckets.length;++i){
+            resizebuckets[i]=new ArrayMap<>();
+        }
+        for(int i=0;i<sets.length;++i){
+            for(K key:sets[i]){
+                resizebuckets[Math.floorMod(key.hashCode(), resizebuckets.length)].put(key, get(key));
+            }
+        }
+        buckets=resizebuckets;
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        if(loadFactor()>MAX_LF) resize();
+        if(containsKey(key)){
+            buckets[hash(key)].put(key, value);
+        }
+        else{
+            ++size;
+            buckets[hash(key)].put(key, value);
+        }
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
