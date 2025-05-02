@@ -132,6 +132,9 @@ public class TestBSTMap {
                 }
         } */
         b.put(10, null);
-        b.remove(null);
+        b.put(11, null);
+        System.out.println(b.keySet());
+        b.remove(11);
+        System.out.println(b.keySet());
     }
 }
