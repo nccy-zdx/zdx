@@ -187,42 +187,44 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private void TwoChildRemove(K key,Node p){
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
-                leftmaxmove(p.left);
+                p.left=leftmaxmove(p.left);
             }
             else TwoChildRemove(key, p.left);
         } //left smaller.
         else if(key.compareTo(p.key)>0){
             if(p.right.key.compareTo(key)==0){
-                leftmaxmove(p.right);
+                p.right=leftmaxmove(p.right);
             }
             else TwoChildRemove(key, p.left);
         } //right larger.
         else{
             Node leftmaxParent=p;
             Node leftmax=p.left;
-            while (leftmax.right==null) {
+            while (leftmax.right!=null) {
                 leftmaxParent=leftmax;
                 leftmax=leftmax.right;
             }
             if(leftmax.left!=null) leftmaxParent.right=leftmax.left;
             else leftmaxParent.right=null;
-            p=leftmax;
+            leftmax.left=root.left;
+            leftmax.right=root.right;
+            root=leftmax;
         } //equal condition.
     }
 
     //Helper method to save space.
-    private void leftmaxmove(Node p){
+    private Node leftmaxmove(Node p){
         Node leftmaxParent=p;
-        Node leftmax=p.left;
-        while (leftmax.right==null) {
+        Node leftmax=p;
+        while (leftmax.right!=null) {
             leftmaxParent=leftmax;
             leftmax=leftmax.right;
         }
         if(leftmax.left!=null) leftmaxParent.right=leftmax.left;
         else leftmaxParent.right=null;
-        p.left=leftmax;
-        leftmax.left=p.left.left;
-        leftmax.right=p.left.right;
+        leftmax.left=p.left;
+        leftmax.right=p.right;
+        return leftmax;
     }
 
     /** Removes KEY from the tree if present

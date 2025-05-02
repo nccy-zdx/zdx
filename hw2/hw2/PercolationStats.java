@@ -3,8 +3,6 @@ package hw2;
 import edu.princeton.cs.introcs.StdRandom;
 
 public class PercolationStats {
-    private int T; //repetitive time.
-    private int N;
     private double sqrtT; //sqrt of T.
     private double[] data; //collect experiment data.
     private double u; //average
@@ -17,10 +15,8 @@ public class PercolationStats {
             IllegalArgumentException e=new IllegalArgumentException();
             throw e;
         }
-        this.T=T;
-        this.N=N;
         data=new double[T];
-        sqrtT=Math.sqrt(this.T);
+        sqrtT=Math.sqrt(T);
         u=0;
         sigma=0;
         for(int i=0;i<T;++i){
@@ -57,12 +53,4 @@ public class PercolationStats {
         return u+1.96*sigma/sqrtT;
     }
 
-
-    public static void main(String[] args) {
-        PercolationFactory pf=new PercolationFactory();
-        PercolationStats ps=new PercolationStats(20, 10000, pf);
-        System.out.println(ps.confidenceHigh());
-        System.out.println(ps.confidenceLow());
-        System.out.println(ps.mean());
-    }//just for test.*/
 }
