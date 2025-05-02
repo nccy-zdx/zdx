@@ -114,7 +114,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        if(root.key==null) return null;
+        if(root==null) return null;
         Set<K> SetOfKeys=new HashSet<K>();
         setHelper(SetOfKeys, root);
         return SetOfKeys;
@@ -135,6 +135,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     private void NoChildRemove(K key,Node p){
+        if(p==null) return;
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
                 p.left=null;
@@ -149,13 +150,15 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         } //right larger.
         else{
             if(p==root){
-                root=new Node(null, null);
+                clear();
+                size=1;
             }
             else p=null;
         }
     }
 
     private void OneChildRemove(K key,Node p){
+        if(p==null) return;
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
                 if(p.left.right!=null){
@@ -195,6 +198,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     private void TwoChildRemove(K key,Node p){
+        if(p==null) return;
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
                 p.left=leftmaxmove(p.left);
@@ -230,6 +234,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     //Helper method to save space.
     private Node leftmaxmove(Node p){
+        if(p==null) return null;
         Node leftmaxParent=p;
         Node leftmax=p;
         while (leftmax.right!=null) {
