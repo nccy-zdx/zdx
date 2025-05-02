@@ -47,7 +47,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     private V getHelper(K key, Node p) {
         V value=null;
-        if(p==null) return null;
+        if(p==null||p.key==null) return null;
         if(key.compareTo(p.key)<0){
             value=getHelper(key, p.left);
         }//go to left. smaller
@@ -75,7 +75,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     private Node putHelper(K key, V value, Node p) {
         Node newnode=new Node(key, value);
-        if(p==null) return newnode;
+        if(p==null||p.key==null) return newnode;
         if(key.compareTo(p.key)<0){
             p.left=putHelper(key, value, p.left);
         }//left samller condition.
@@ -107,7 +107,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
 
     private void setHelper(Set<K> set,Node p){
-        if(p==null) return;
+        if(p==null||p.key==null) return;
         setHelper(set, p.left);
         set.add(p.key);
         setHelper(set, p.right);
@@ -124,8 +124,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     //Helper method to find the Node to be removed.
     private Node removeHelper(K key,Node p){
-        if(key==null) throw new IllegalArgumentException("calls remove with a null key");
-        if(p==null) return null;
+        if(p==null||p.key==null) return null;
         if(key.compareTo(p.key)<0){
             return removeHelper(key, p.left);
         } //left smaller.
@@ -139,7 +138,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private void NoChildRemove(K key,Node p){
         if(key==null) throw new IllegalArgumentException("calls remove with a null key");
-        if(p==null) return;
+        if(p==null||p.key==null) return;
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
                 p.left=null;
@@ -163,7 +162,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private void OneChildRemove(K key,Node p){
         if(key==null) throw new IllegalArgumentException("calls remove with a null key");
-        if(p==null) return;
+        if(p==null||p.key==null) return;
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
                 if(p.left.right!=null){
@@ -204,7 +203,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     private void TwoChildRemove(K key,Node p){
         if(key==null) throw new IllegalArgumentException("calls remove with a null key");
-        if(p==null) return;
+        if(p==null||p.key==null) return;
         if(key.compareTo(p.key)<0){
             if(p.left.key.compareTo(key)==0){
                 p.left=leftmaxmove(p.left);
@@ -240,7 +239,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     //Helper method to save space.
     private Node leftmaxmove(Node p){
-        if(p==null) return null;
+        if(p==null||p.key==null) return null;
         Node leftmaxParent=p;
         Node leftmax=p;
         while (leftmax.right!=null) {
@@ -283,7 +282,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      **/
     @Override
     public V remove(K key, V value) {
-        if(key==null) throw new IllegalArgumentException("calls remove with a null key");
+        if(key==null||value==null) throw new IllegalArgumentException("calls remove with a null key");
         if(get(key)!=value) return null;
         else{
             return remove(key);
