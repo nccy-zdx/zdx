@@ -15,6 +15,7 @@ public interface Map61B<K, V> extends Iterable<K> {
 
     /* Returns true if this map contains a mapping for the specified key. */
     default boolean containsKey(K key) {
+        if(key==null) throw new IllegalArgumentException("calls contains with a null key");
         return get(key) != null;
     }
 
