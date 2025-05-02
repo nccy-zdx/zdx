@@ -134,6 +134,8 @@ public class TestBSTMap {
         //b.put(0, null);
         System.out.println(b.keySet());
         b.remove(1);
+        b.remove(2);
+        b.remove(1);
         System.out.println(b.keySet());
     }
 }
