@@ -110,8 +110,10 @@ public class TestBSTMap {
         b.put(7, "seven");
         b.put(6, "six");
         b.put(8, "eight");
-        System.out.println(b.keySet());
+        b.remove(3);
+        b.remove(4);
         b.remove(5);
+        System.out.println(b.get(3));
         System.out.println(b.keySet());
     }
 }

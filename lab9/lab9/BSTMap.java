@@ -198,17 +198,23 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             else TwoChildRemove(key, p.left);
         } //right larger.
         else{
-            Node leftmaxParent=p;
-            Node leftmax=p.left;
+            Node leftmaxParent=root.left;
+            Node leftmax=root.left;
             while (leftmax.right!=null) {
                 leftmaxParent=leftmax;
                 leftmax=leftmax.right;
             }
             if(leftmax.left!=null) leftmaxParent.right=leftmax.left;
             else leftmaxParent.right=null;
-            leftmax.left=root.left;
-            leftmax.right=root.right;
-            root=leftmax;
+            if(leftmax!=leftmaxParent){
+                leftmax.right=root.right;
+                leftmax.left=root.left;
+                root=leftmax;
+            }
+            else{
+                leftmax.right=root.right;
+                root=leftmax;
+            }
         } //equal condition.
     }
 
@@ -245,6 +251,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         else{
             OneChildRemove(key,root);
         }// one child case.
+        --size;
         return value;
     }
 
