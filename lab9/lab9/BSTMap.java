@@ -198,7 +198,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             if(p.right.key.compareTo(key)==0){
                 p.right=leftmaxmove(p.right);
             }
-            else TwoChildRemove(key, p.left);
+            else TwoChildRemove(key, p.right);
         } //right larger.
         else{
             Node leftmaxParent=root.left;

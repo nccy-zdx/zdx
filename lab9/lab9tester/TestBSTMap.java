@@ -2,7 +2,11 @@ package lab9tester;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.Test;
+
+import edu.princeton.cs.algs4.In;
 import lab9.BSTMap;
 
 /**
@@ -88,26 +92,42 @@ public class TestBSTMap {
 
     @Test
     public void sanityRemoveTest(){
-        BSTMap<Integer,String> b=new BSTMap<Integer, String>();
-        b.put(5, "five");
-        b.put(3,"three");
-        b.put(4, "four");
-        b.put(2, "two");
-        b.put(7, "seven");
-        b.put(6, "six");
-        b.put(8, "eight");
-        b.remove(3);
-        assertTrue(b.get(3)!=null);
+        Random r=new Random();
+        BSTMap<Integer, String> b = new BSTMap<Integer, String>();
+        for(int i=1;i<1000;++i){
+            int num=r.nextInt(i);
+            if(r.nextInt(10)==0){
+                b.put(num,i+"th");
+                assertTrue(b.get(num)!=i+"th");
+            }
+            if(r.nextInt(10)==1){
+                b.remove(num);
+                assertTrue(!b.containsKey(num));
+            }     
+        }
     }
 
     public static void main(String[] args) {
         //jh61b.junit.TestRunner.runTests(TestBSTMap.class);
-        BSTMap<Integer,String> b=new BSTMap<Integer, String>();
-        b.put(5, "five");
-        //b.put(6, "two");
-        //b.put(2, "six");
-        System.out.println(b.keySet());
-        b.remove(5);
-        System.out.println(b.keySet());
+        Random r=new Random();
+        BSTMap<Integer, String> b = new BSTMap<Integer, String>();
+        for(int i=1;i<1000;++i){
+            int num=r.nextInt(i);
+            if(r.nextInt(2)==0){
+                b.put(num,i+"th");
+            }
+            if(r.nextInt(2)==1){
+                try{
+                    b.remove(num);
+                }
+                catch(NullPointerException e){
+                    System.out.println(num);
+                    for(int key:b){
+                        System.out.print(key+" ");
+                    }
+                    throw e;
+                }
+            }     
+        }
     }
 }
