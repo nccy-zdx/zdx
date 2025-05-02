@@ -65,6 +65,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V get(K key) {
+        if(key==null) throw new IllegalArgumentException("calls get with a null key");
         V value=getHelper(key, root);
         return value;
     }
@@ -92,6 +93,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public void put(K key, V value) {
+        if(key==null) throw new IllegalArgumentException("calls put with a null key");
         root=putHelper(key, value, root);
         ++size;
     }
@@ -254,28 +256,21 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        try{
-            V value=get(key);
-            Node removeNode=removeHelper(key, root);
-            if(removeNode==null) return null;
-            if(removeNode.left==null&&removeNode.right==null){
-                NoChildRemove(key,root);
-            } //no child case.
-            else if(removeNode.left!=null&&removeNode.right!=null){
-                TwoChildRemove(key, root);
-            } //two child case.
-            else{
-                OneChildRemove(key,root);
-            }// one child case.
-            --size;
-            return value;
-        }
-        catch(NullPointerException e){
-            System.out.println(key);
-            System.out.println(containsKey(key));
-            System.out.println(root.key);
-        }
-        return null;
+        if(key==null) throw new IllegalArgumentException("calls remove with a null key");
+        V value=get(key);
+        Node removeNode=removeHelper(key, root);
+        if(removeNode==null) return null;
+        if(removeNode.left==null&&removeNode.right==null){
+            NoChildRemove(key,root);
+        } //no child case.
+        else if(removeNode.left!=null&&removeNode.right!=null){
+            TwoChildRemove(key, root);
+        } //two child case.
+        else{
+            OneChildRemove(key,root);
+        }// one child case.
+        --size;
+        return value;
     }
 
     /** Removes the key-value entry for the specified key only if it is
@@ -284,6 +279,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      **/
     @Override
     public V remove(K key, V value) {
+        if(key==null) throw new IllegalArgumentException("calls remove with a null key");
         if(get(key)!=value) return null;
         else{
             return remove(key);
