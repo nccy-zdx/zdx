@@ -254,20 +254,28 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      */
     @Override
     public V remove(K key) {
-        V value=get(key);
-        Node removeNode=removeHelper(key, root);
-        if(removeNode==null) return null;
-        if(removeNode.left==null&&removeNode.right==null){
-            NoChildRemove(key,root);
-        } //no child case.
-        else if(removeNode.left!=null&&removeNode.right!=null){
-            TwoChildRemove(key, root);
-        } //two child case.
-        else{
-            OneChildRemove(key,root);
-        }// one child case.
-        --size;
-        return value;
+        try{
+            V value=get(key);
+            Node removeNode=removeHelper(key, root);
+            if(removeNode==null) return null;
+            if(removeNode.left==null&&removeNode.right==null){
+                NoChildRemove(key,root);
+            } //no child case.
+            else if(removeNode.left!=null&&removeNode.right!=null){
+                TwoChildRemove(key, root);
+            } //two child case.
+            else{
+                OneChildRemove(key,root);
+            }// one child case.
+            --size;
+            return value;
+        }
+        catch(NullPointerException e){
+            System.out.println(key);
+            System.out.println(containsKey(key));
+            System.out.println(root.key);
+        }
+        return null;
     }
 
     /** Removes the key-value entry for the specified key only if it is
