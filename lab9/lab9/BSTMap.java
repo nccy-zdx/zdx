@@ -116,7 +116,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        if(root==null) return null;
+        if(root==null||root.key==null) return null;
         Set<K> SetOfKeys=new HashSet<K>();
         setHelper(SetOfKeys, root);
         return SetOfKeys;
