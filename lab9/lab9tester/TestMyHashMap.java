@@ -128,6 +128,15 @@ public class TestMyHashMap {
     }
 
     public static void main(String[] args) {
-        jh61b.junit.TestRunner.runTests(TestMyHashMap.class);
+        //jh61b.junit.TestRunner.runTests(TestMyHashMap.class);
+        MyHashMap<Integer, String> h=new MyHashMap<Integer,String>();
+        for(int i=0;i<20;++i){
+            h.put(i, i+"th");
+        }
+        h.remove(0);
+        h.remove(19);
+        h.remove(1, null);
+        System.out.println(h.get(1));
+        System.out.println(h.keySet());
     }
 }

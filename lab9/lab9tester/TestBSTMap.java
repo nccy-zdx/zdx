@@ -104,16 +104,10 @@ public class TestBSTMap {
         //jh61b.junit.TestRunner.runTests(TestBSTMap.class);
         BSTMap<Integer,String> b=new BSTMap<Integer, String>();
         b.put(5, "five");
-        b.put(3,"three");
-        b.put(4, "four");
-        b.put(2, "two");
-        b.put(7, "seven");
-        b.put(6, "six");
-        b.put(8, "eight");
-        b.remove(3);
-        b.remove(4);
+        //b.put(6, "two");
+        //b.put(2, "six");
+        System.out.println(b.keySet());
         b.remove(5);
-        System.out.println(b.get(3));
         System.out.println(b.keySet());
     }
 }

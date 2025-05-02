@@ -57,12 +57,12 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return buckets[hash(key)].get(key);
     }
 
-    private void resize(){
+    private void resize(int multiple){
         Set<K>[] sets=new Set[buckets.length];
         for(int i=0;i<buckets.length;++i){
             sets[i]=buckets[i].keySet();
         }
-        ArrayMap<K, V>[] resizebuckets =new ArrayMap[buckets.length*3];
+        ArrayMap<K, V>[] resizebuckets =new ArrayMap[buckets.length*multiple];
         for(int i=0;i<resizebuckets.length;++i){
             resizebuckets[i]=new ArrayMap<>();
         }
@@ -77,7 +77,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        if(loadFactor()>MAX_LF) resize();
+        if(loadFactor()>MAX_LF) resize(3);
         if(containsKey(key)){
             buckets[hash(key)].put(key, value);
         }
@@ -98,7 +98,13 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K>[] sets=new Set[buckets.length];
+        Set<K> set=new HashSet<K>();
+        for(int i=0;i<buckets.length;++i){
+            sets[i]=buckets[i].keySet();
+            set.addAll(sets[i]);
+        }
+        return set;
     }
 
     /* Removes the mapping for the specified key from this map if exists.
@@ -106,7 +112,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        return buckets[hash(key)].remove(key);
     }
 
     /* Removes the entry for the specified key only if it is currently mapped to
@@ -114,11 +120,25 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        if(get(key)==value) return remove(key);
+        else return null;
+    }
+
+    private class HashMapIterator implements Iterator<K>{
+        Set<K> set;
+        public HashMapIterator(){
+            set=keySet();
+        }
+        public boolean hasNext(){
+            return set.iterator().hasNext();
+        }
+        public K next(){
+            return set.iterator().next();
+        }
     }
 
     @Override
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new HashMapIterator();
     }
 }

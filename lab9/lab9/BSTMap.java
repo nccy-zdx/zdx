@@ -147,6 +147,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             else NoChildRemove(key, p.right);
         } //right larger.
         else{
+            if(p==root) root=null;
             p=null;
         }
     }
@@ -176,9 +177,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         } //right larger.
         else{
             if(p.right!=null){
+                if(p==root) root=p.right;
                 p=p.right;
             }
             else{
+                if(p==root) root=p.left;
                 p=p.left;
             }//remove
         }
@@ -277,15 +280,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
         public K next(){
             Node n=s.pop();
-            int num;
             if(n.left!=null&&n.right!=null){
-                num=2;
                 s.push(n.right);
                 s.push(n.left);
             }
-            else if(n.left==null&&n.right==null) num=0;
+            else if(n.left==null&&n.right==null);
             else{
-                num=1;
                 if(n.right==null) s.push(n.left);
                 else s.push(n.right);
             }
@@ -297,4 +297,5 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     public Iterator<K> iterator() {
         return new BSTMapIterator();
     }
+    
 }
