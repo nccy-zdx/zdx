@@ -128,9 +128,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         else if(key.compareTo(p.key)>0){
             return removeHelper(key, p.right);
         } //right larger.
-        else{
+        else if(key.compareTo(p.key)==0){
             return p;
         } //equal.
+        else return null;
     }
 
     private void NoChildRemove(K key,Node p){
@@ -147,8 +148,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
             else NoChildRemove(key, p.right);
         } //right larger.
         else{
-            if(p==root) root=null;
-            p=null;
+            if(p==root){
+                root=null;
+            }
+            else p=null;
         }
     }
 
@@ -177,12 +180,16 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         } //right larger.
         else{
             if(p.right!=null){
-                if(p==root) root=p.right;
-                p=p.right;
+                if(p==root){
+                    root=p.right;
+                }
+                else p=p.right;
             }
             else{
-                if(p==root) root=p.left;
-                p=p.left;
+                if(p==root){
+                    root=p.left;
+                }
+                else p=p.left;
             }//remove
         }
     }
@@ -243,8 +250,8 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     @Override
     public V remove(K key) {
         V value=get(key);
-        if(value==null) return null;
         Node removeNode=removeHelper(key, root);
+        if(removeNode==null) return null;
         if(removeNode.left==null&&removeNode.right==null){
             NoChildRemove(key,root);
         } //no child case.

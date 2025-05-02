@@ -111,12 +111,12 @@ public class TestBSTMap {
         //jh61b.junit.TestRunner.runTests(TestBSTMap.class);
         Random r=new Random();
         BSTMap<Integer, String> b = new BSTMap<Integer, String>();
-        for(int i=0;i<1000;++i){
+        /*for(int i=0;i<10000;++i){
             int num=r.nextInt(i+1);
-            if(r.nextInt(2)==0){
+            if(r.nextInt(1)==0){
                 b.put(num,i+"th");
             }
-            if(r.nextInt(3)==1){
+            else if(r.nextInt(2)==1){
                 try{
                     b.remove(num);
                 }
@@ -127,7 +127,13 @@ public class TestBSTMap {
                     }
                     throw e;
                 }
-            }     
-        }
+            }
+        }*/
+        b.put(1, null);
+        b.put(2, null);
+        //b.put(0, null);
+        System.out.println(b.keySet());
+        b.remove(1);
+        System.out.println(b.keySet());
     }
 }
