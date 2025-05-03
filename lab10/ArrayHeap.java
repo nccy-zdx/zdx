@@ -142,17 +142,6 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         return;
     }
 
-    public static void main(String[] args) {
-        ExtrinsicPQ<String> pq = new ArrayHeap<>();
-        pq.insert("c", 0);
-        pq.insert("i", 1);
-        pq.insert("g", 2);
-        System.out.println(pq.removeMin());
-        System.out.println(pq.removeMin());
-        System.out.println(pq.removeMin());
-        //System.out.println(pq.removeMin());
-    }
-
     /**
      * Inserts an item with the given priority value. This is enqueue, or offer.
      * To implement this method, add it to the end of the ArrayList, then swim it.
@@ -216,21 +205,30 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public void changePriority(T item, double priority) {
-        for(int i=1;i<size;++i){
+        for(int i=1;i<=size;++i){
             if(contents[i].myItem.equals(item)){
                 double p=contents[i].myPriority;
                 contents[i].myPriority=priority;
                 if(p<priority){
                     sink(i);
                 }
-                else{
+                else if(p>priority){
                     swim(i);
                 }
+                else ;
                 break;
             }
         }
-
         return;
+    }
+
+    
+    public static void main(String[] args) {
+        ExtrinsicPQ<String> pq = new ArrayHeap<>();
+        pq.insert("c", 0);
+        pq.insert("i", 1);
+        pq.insert("g", 2);
+
     }
 
     /**
