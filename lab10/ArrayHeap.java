@@ -120,7 +120,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     private void sink(int index) {
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
-        if(index==size||leftIndex(index)>=size||rightIndex(index)>=size) return;
+        if(index>=size) return;
         if(contents[leftIndex(index)]==null&&contents[rightIndex(index)]==null) return;
         else if(contents[leftIndex(index)]!=null&&contents[rightIndex(index)]!=null){
             if(min(leftIndex(index), rightIndex(index))==leftIndex(index)){
@@ -139,12 +139,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
                     sink(leftIndex(index));
                 }
             }
-            else{
+            /*else{
                 if(min(rightIndex(index), index)==rightIndex(index)){
                     swap(rightIndex(index), index);
                     sink(rightIndex(index));
                 }
-            }
+            }*/
         }
         return;
     }
@@ -211,7 +211,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public void changePriority(T item, double priority) {
-        for(int i=0;i<size;++i){
+        for(int i=1;i<size;++i){
             if(contents[i].myItem.equals(item)){
                 double p=contents[i].myPriority;
                 contents[i].myPriority=priority;
