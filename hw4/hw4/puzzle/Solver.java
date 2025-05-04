@@ -61,4 +61,9 @@ public class Solver {
     public Iterable<WorldState> solution(){
         return shortpath;
     }
-}
+
+    @Override
+    public int hashCode(){
+        return shortpath.hashCode();
+    }
+}    

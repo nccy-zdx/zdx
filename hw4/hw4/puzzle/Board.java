@@ -87,27 +87,27 @@ public class Board implements WorldState{
                     if(tiles[i][j]==0) break;
                 }
                 if((i*size+j+1)!=tiles[i][j]){
-                    distance=distance+Math.abs(tiles[i][j]/size-i)+Math.abs(tiles[i][j]%size-1-j);
+                    if(tiles[i][j]%size==0){
+                        distance=distance+size-1-j+Math.abs(tiles[i][j]/size-1-i);
+                    }
+                    else{
+                        distance=distance+Math.abs(tiles[i][j]/size-i)+Math.abs(j-tiles[i][j]%size+1);
+                    }
                 }
             }
         }
         return distance;
     }
 
-    /*public static void main(String[] args) {
-        int[][] tile=new int[3][3];
-        tile[0][0]=8;
-        tile[0][1]=1;
-        tile[0][2]=3;
-        tile[1][0]=4;
-        tile[1][1]=0;
-        tile[1][2]=2;
-        tile[2][0]=7;
-        tile[2][1]=6;
-        tile[2][2]=5;
+    public static void main(String[] args) {
+        int[][] tile=new int[2][2];
+        tile[0][0]=2;
+        tile[0][1]=3;
+        tile[1][0]=0;
+        tile[1][1]=1;
         Board b=new Board(tile);
-        System.out.println(b.neighbors());
-    }*/
+        System.out.println(b.manhattan());
+    }
 
     @Override
     public int estimatedDistanceToGoal(){
@@ -143,6 +143,11 @@ public class Board implements WorldState{
         }
         s.append("\n");
         return s.toString();
+    }
+
+    @Override
+    public int hashCode(){
+        return tiles.hashCode();
     }
 
 }
