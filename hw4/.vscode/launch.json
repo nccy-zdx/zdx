@@ -1,0 +1,50 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Board",
+            "request": "launch",
+            "mainClass": "hw4.puzzle.Board",
+            "projectName": "hw4_7fd7bbf7"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "AlphabetEasyPuzzleSolver",
+            "request": "launch",
+            "mainClass": "hw4.puzzle.AlphabetEasyPuzzleSolver",
+            "projectName": "hw4_7fd7bbf7"
+        },
+        {
+            "type": "java",
+            "name": "CommonBugDetector",
+            "request": "launch",
+            "mainClass": "hw4.puzzle.CommonBugDetector",
+            "projectName": "hw4_7fd7bbf7"
+        },
+        {
+            "type": "java",
+            "name": "EightPuzzleSolver",
+            "request": "launch",
+            "args": "input//puzzle15.txt",
+            "mainClass": "hw4.puzzle.EightPuzzleSolver",
+            "projectName": "hw4_7fd7bbf7"
+        },
+        {
+            "type": "java",
+            "name": "WordPuzzleSolver",
+            "request": "launch",
+            "mainClass": "hw4.puzzle.WordPuzzleSolver",
+            "projectName": "hw4_7fd7bbf7"
+        }
+    ]
+}
