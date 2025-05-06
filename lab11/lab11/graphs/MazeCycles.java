@@ -9,14 +9,16 @@ public class MazeCycles extends MazeExplorer {
     public int[] edgeTo;
     public boolean[] marked;
     */
+    private boolean isCycle=false;
 
     public MazeCycles(Maze m) {
         super(m);
+
     }
 
     @Override
     public void solve() {
-        // TODO: Your code here!
+
     }
 
     // Helper methods go here
