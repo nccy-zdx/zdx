@@ -98,14 +98,6 @@ public class Router {
         return shortestNode;
     }
 
-    public static void main(String[] args) {
-        GraphDB graph = new GraphDB("../library-sp18/data/berkeley-2018.osm.xml");
-        List<Long> actual=Router.shortestPath(graph, -122.27572799879053, 37.873826273550726, 
-        -122.28924763881035, 37.83640692189568);
-        System.out.println(actual.size());
-        System.out.println(actual);
-    }
-
     /**
      * Create the list of directions corresponding to a route on the graph.
      * @param g The graph to use.
