@@ -222,15 +222,6 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         return;
     }
 
-    
-    public static void main(String[] args) {
-        ExtrinsicPQ<String> pq = new ArrayHeap<>();
-        pq.insert("c", 0);
-        pq.insert("i", 1);
-        pq.insert("g", 2);
-
-    }
-
     /**
      * Prints out the heap sideways. Provided for you.
      */

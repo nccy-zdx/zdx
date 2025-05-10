@@ -1,5 +1,10 @@
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +28,75 @@ public class Router {
      * @param destlat The latitude of the destination location.
      * @return A list of node id's in the order visited on the shortest path.
      */
-    public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
-                                          double destlon, double destlat) {
-        return null; // FIXME
+    public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,double destlon, double destlat) {
+        List<Long> shortestNode=new ArrayList<>();
+        Stack<Long> store=new Stack<>();
+        Set<String> set=new HashSet<>();
+        PriorityQueue<GraphDB.Node> minpq=new PriorityQueue<>();
+
+        StringBuffer sb=new StringBuffer();
+        sb.append(g.closest(stlon, stlat));
+        String startkey=new String(sb);
+
+        StringBuffer sb0=new StringBuffer();
+        sb0.append(g.closest(destlon, destlat));
+        String destationkey=new String(sb0);
+
+        GraphDB.Node start=g.Nodes.get(startkey);
+        GraphDB.Node destation=g.Nodes.get(destationkey);
+
+        //A* algorithm
+        GraphDB.Node bsm=start;
+        bsm.preNode=null;
+        bsm.destationNode=destation;
+        bsm.StartNode=start;
+        bsm.sumlength=0;
+
+        minpq.add(bsm);
+        set.add(startkey);
+
+        while (!bsm.id.equals(destation.id)) {//Long is also an Object......
+            for(Long adjkey:g.adjacent(bsm.id)){
+                if(bsm.preNode!=null&&adjkey.equals(bsm.preNode.id)) continue;
+
+                StringBuffer sb1=new StringBuffer();
+                sb1.append(adjkey);
+                String adj=new String(sb1);
+                GraphDB.Node n=g.Nodes.get(adj);
+
+                if(minpq.contains(n)){
+                    if(n.sumlength>bsm.sumlength+g.distance(n.id, bsm.id)){
+                        n.preNode=bsm;
+                        n.sumlength=bsm.sumlength+n.prelength();
+                    }
+                }
+                else if(!set.contains(adj)){
+                    n.preNode=bsm;
+                    n.destationNode=destation;
+                    n.StartNode=start;
+                    n.sumlength=bsm.sumlength+n.prelength();
+                    minpq.add(n);
+                }
+            }
+            bsm=minpq.poll();
+
+            StringBuffer sbb=new StringBuffer();
+            sbb.append(bsm.id);
+            String bsmid=new String(sbb);
+
+            set.add(bsmid);
+        }
+
+        while(bsm!=null){
+            store.push(bsm.id);
+            bsm=bsm.preNode;
+        }
+
+        while(!store.isEmpty()){
+            shortestNode.add(store.pop());
+        }
+
+        return shortestNode;
     }
 
     /**
@@ -37,6 +108,8 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
+
+        
         return null; // FIXME
     }
 

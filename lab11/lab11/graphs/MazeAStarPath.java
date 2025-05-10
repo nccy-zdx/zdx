@@ -1,5 +1,7 @@
 package lab11.graphs;
 
+import edu.princeton.cs.algs4.MinPQ;
+
 /**
  *  @author Josh Hug
  */
@@ -20,7 +22,7 @@ public class MazeAStarPath extends MazeExplorer {
 
     /** Estimate of the distance from v to the target. */
     private int h(int v) {
-        return -1;
+        return Math.abs(maze.toX(v)-maze.toX(t))+Math.abs(maze.toY(v)-maze.toY(t));
     }
 
     /** Finds vertex estimated to be closest to target. */
@@ -31,12 +33,49 @@ public class MazeAStarPath extends MazeExplorer {
 
     /** Performs an A star search from vertex s. */
     private void astar(int s) {
-        // TODO
+        MinPQ<Node> pq=new MinPQ<>();
+        Node init=new Node(s, h(s));
+        pq.insert(init);
+        while (!targetFound) {
+            Node v=pq.delMin();
+            marked[v.w]=true;
+            announce();
+            for(int w:maze.adj(v.w)){
+                if(!marked[w]){
+                    pq.insert(new Node(w, h(w)));
+                    if(w==t){
+                        targetFound=true;
+                        break;
+                    }
+                }
+            }
+            marked[pq.min().w]=true;
+            announce();
+            edgeTo[pq.min().w]=distTo[v.w]+1;
+            announce();
+        }
     }
 
     @Override
     public void solve() {
         astar(s);
+    }
+
+    private class Node implements Comparable<Node>{
+        private int w;
+        private int hw;
+
+        public Node(int w,int hw){
+            this.w=w;
+            this.hw=hw;
+        }
+
+        @Override
+        public int compareTo(Node x){
+            if(x.hw>hw) return -1;
+            else if(x.hw<hw) return 1;
+            else return 0;
+        }
     }
 
 }

@@ -8,9 +8,9 @@ import java.util.Map;
  * not draw the output correctly.
  */
 public class Rasterer {
-
+    //longitude 1 means 111194.87m.
     public Rasterer() {
-        // YOUR CODE HERE
+
     }
 
     /**
@@ -42,10 +42,76 @@ public class Rasterer {
      *                    forget to set this to true on success! <br>
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
-        // System.out.println(params);
+        //System.out.println(params);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
-                           + "your browser.");
+        Boolean querysuccess;
+        int depth=0;
+
+        //set query_success
+        if(params.get("ullat")>MapServer.ROOT_ULLAT||
+        params.get("lrlat")<MapServer.ROOT_LRLAT||
+        params.get("ullon")<MapServer.ROOT_ULLON||
+        params.get("lrlon")>MapServer.ROOT_LRLON||
+        params.get("ullat")<params.get("lrlat")||
+        params.get("ullon")>params.get("lrlon")){
+            querysuccess=false;
+            results.put("query_success", querysuccess);
+        }
+        else{
+            querysuccess=true;
+            results.put("query_success", querysuccess);
+        }
+ 
+        //set depth
+        double LonDPP=(params.get("lrlon")-params.get("ullon"))/params.get("w");
+        double longth=(MapServer.ROOT_LRLON-MapServer.ROOT_ULLON)/MapServer.TILE_SIZE;
+        double lanth=MapServer.ROOT_ULLAT-MapServer.ROOT_LRLAT;
+        for(int i=0;i<8;++i){
+            if(longth<=LonDPP){
+                depth=i;
+                results.put("depth", depth);
+                break;
+            }
+            if(i==7){
+                depth=7;
+                results.put("depth", depth);
+                break;
+            }
+            longth=longth/2.0;
+            lanth=lanth/2.0;
+        }
+
+        //set raster_ _
+        longth=longth*MapServer.TILE_SIZE;
+        int downside=0,upperside=0,rightside=0,leftside=0;
+        for(int i=0;i<Math.pow(2, depth);++i){
+            if(params.get("lrlat")<MapServer.ROOT_ULLAT-lanth*i&&params.get("lrlat")>MapServer.ROOT_ULLAT-lanth*(i+1)){
+                downside=i;
+                results.put("raster_lr_lat", MapServer.ROOT_ULLAT-lanth*(i+1));
+            }
+            if(params.get("ullat")<MapServer.ROOT_ULLAT-lanth*i&&params.get("ullat")>MapServer.ROOT_ULLAT-lanth*(i+1)){
+                upperside=i;
+                results.put("raster_ul_lat", MapServer.ROOT_ULLAT-lanth*i);
+            }
+            if(params.get("lrlon")>MapServer.ROOT_ULLON+longth*i&&params.get("lrlon")<MapServer.ROOT_ULLON+longth*(i+1)){
+                rightside=i;
+                results.put("raster_lr_lon", MapServer.ROOT_ULLON+longth*(i+1));
+            }
+            if(params.get("ullon")>MapServer.ROOT_ULLON+longth*i&&params.get("ullon")<MapServer.ROOT_ULLON+longth*(i+1)){
+                leftside=i;
+                results.put("raster_ul_lon", MapServer.ROOT_ULLON+longth*i);
+            }
+        }
+
+        //set render_grid
+        String[][] grid=new String[downside-upperside+1][rightside-leftside+1];
+        for(int i=0;i<downside-upperside+1;++i){
+            for(int j=0;j<rightside-leftside+1;++j){
+                grid[i][j]="d"+depth+"_x"+(leftside+j)+"_y"+(upperside+i)+".png";
+            }
+        }
+        results.put("render_grid", grid);
+
         return results;
     }
 

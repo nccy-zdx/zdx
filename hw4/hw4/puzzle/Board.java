@@ -99,7 +99,7 @@ public class Board implements WorldState{
         return distance;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         int[][] tile=new int[2][2];
         tile[0][0]=2;
         tile[0][1]=3;
@@ -107,7 +107,7 @@ public class Board implements WorldState{
         tile[1][1]=1;
         Board b=new Board(tile);
         System.out.println(b.manhattan());
-    }
+    }*///test
 
     @Override
     public int estimatedDistanceToGoal(){

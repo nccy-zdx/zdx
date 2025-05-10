@@ -7,6 +7,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -20,6 +24,69 @@ import java.util.ArrayList;
 public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
+    Map<String,Node> Nodes=new LinkedHashMap<>();
+    private Map<String,Edge> Edges=new LinkedHashMap<>();
+
+    static class Node implements Comparable<Node>{
+        Long id;
+        double lon;
+        double lat;
+        Map<String,String> extrainfo;
+        List<Edge> Edges;
+        Node preNode;
+        Node destationNode;
+        Node StartNode;
+        double sumlength=10000;
+
+        public Node(String id,String lon,String lat){
+            this.id=Long.parseLong(id);
+            this.lon=Double.parseDouble(lon);
+            this.lat=Double.parseDouble(lat);
+            extrainfo=new HashMap<>();
+            Edges=new ArrayList<>();
+        }
+
+        public Node(Long id,double lon,double lat){
+            this.id=id;
+            this.lon=lon;
+            this.lat=lat;
+            extrainfo=new HashMap<>();
+            Edges=new ArrayList<>();
+        }
+
+        public double prelength(){
+            if(preNode==null) return 0;
+            else return distance(lon,lat,preNode.lon,preNode.lat);
+        }
+
+        @Override
+        public int compareTo(Node n){
+            double this_todestation;
+            double todestation;
+
+            if(this==destationNode) this_todestation=0;
+            else this_todestation=distance(lon,lat,destationNode.lon,destationNode.lat);
+            if(n==destationNode) todestation=0;
+            else todestation=distance(n.lon,n.lat,destationNode.lon,destationNode.lat);
+
+            if(this_todestation+sumlength<todestation+n.sumlength) return -1;
+            else if(this_todestation+sumlength>todestation+n.sumlength) return 1;
+            else return 0;
+        }
+
+    }
+
+    static class Edge{
+        Long id;
+        Map<String,String> extrainfo;
+        List<String> Nodesid;
+
+        public Edge(String id){
+            this.id=Long.parseLong(id);
+            extrainfo=new HashMap<>();
+            Nodesid=new ArrayList<>();
+        }
+    }
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -57,7 +124,16 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        Map<String,Node> nodes=new LinkedHashMap<>();
+        for(Edge e:Edges.values()){
+            for(String key:e.Nodesid){
+                List<Long> adj=((List<Long>)adjacent(Long.parseLong(key)));
+                if(!adj.isEmpty()){
+                    nodes.put(key, Nodes.get(key));
+                }
+            }
+        }
+        Nodes=nodes;
     }
 
     /**
@@ -65,8 +141,11 @@ public class GraphDB {
      * @return An iterable of id's of all vertices in the graph.
      */
     Iterable<Long> vertices() {
-        //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        List<Long> vertices=new ArrayList<>();
+        for(Node n:Nodes.values()){
+            vertices.add(n.id);
+        }
+        return vertices;
     }
 
     /**
@@ -75,7 +154,26 @@ public class GraphDB {
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return null;
+        StringBuffer sb=new StringBuffer();
+        sb.append(v);
+        String id=new String(sb);
+        List<Long> adja=new ArrayList<>();
+        List<Edge> e=Nodes.get(id).Edges;
+        for(int i=0;i<e.size();++i){
+            List<String> strs=e.get(i).Nodesid;
+            for(int j=0;j<strs.size();++j){
+                if(strs.get(j).equals(id)){
+                    if(j!=0){
+                        adja.add(Long.parseLong(strs.get(j-1)));
+                    }
+                    if(j!=strs.size()-1){
+                        adja.add(Long.parseLong(strs.get(j+1)));
+                    }
+                    break;
+                }
+            }
+        }
+        return adja;
     }
 
     /**
@@ -136,7 +234,16 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double lon, double lat) {
-        return 0;
+        double min=10000;
+        long minid=0;
+        for(Node n:Nodes.values()){
+            double dist=distance(lon, lat, n.lon, n.lat);
+            if(dist<min){
+                min=dist;
+                minid=n.id;
+            }
+        }
+        return minid;
     }
 
     /**
@@ -145,7 +252,10 @@ public class GraphDB {
      * @return The longitude of the vertex.
      */
     double lon(long v) {
-        return 0;
+        StringBuffer sb=new StringBuffer();
+        sb.append(v);
+        String id=new String(sb);
+        return this.Nodes.get(id).lon;
     }
 
     /**
@@ -154,6 +264,24 @@ public class GraphDB {
      * @return The latitude of the vertex.
      */
     double lat(long v) {
-        return 0;
+        StringBuffer sb=new StringBuffer();
+        sb.append(v);
+        String id=new String(sb);
+        return this.Nodes.get(id).lat;
     }
+
+    void addNode(Node n){
+        StringBuffer sb=new StringBuffer();
+        sb.append(n.id);
+        String id=new String(sb);
+        this.Nodes.put(id, n);
+    }
+
+    void addEdge(Edge e){
+        StringBuffer sb=new StringBuffer();
+        sb.append(e.id);
+        String id=new String(sb);
+        Edges.put(id, e);
+    }
+  
 }
