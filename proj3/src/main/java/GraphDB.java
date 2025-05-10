@@ -35,7 +35,6 @@ public class GraphDB {
         List<Edge> Edges;
         Node preNode;
         Node destationNode;
-        Node StartNode;
         double sumlength=10000;
 
         public Node(String id,String lon,String lat){
