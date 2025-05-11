@@ -78,8 +78,7 @@ public class Router {
                 else if(!set.contains(n.id.toString())){//00
                     n.preNode=bsm;
                     n.destationNode=destation;
-                    if(shortdistance.get(n.preNode.id.toString())+n.prelength()<shortdistance.get(n.id.toString())){
-                    shortdistance.put(n.id.toString(), shortdistance.get(n.preNode.id.toString())+n.prelength());}
+                    shortdistance.put(n.id.toString(), shortdistance.get(n.preNode.id.toString())+n.prelength());
                     n.sumlength=shortdistance.get(n.id.toString());
                     minpq.add(n);
                 }
