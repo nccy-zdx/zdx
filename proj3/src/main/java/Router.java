@@ -35,7 +35,7 @@ public class Router {
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,double destlon, double destlat) {
         List<Long> shortestNode=new ArrayList<>();
         Stack<Long> store=new Stack<>();
-        Set<String> set=new HashSet<>();
+        Set<String> set=new HashSet<>();   //used for mark.
         PriorityQueue<GraphDB.Node> minpq=new PriorityQueue<>();
         Map<String,Double> shortdistance=new HashMap<>();
 
@@ -59,7 +59,7 @@ public class Router {
 
         while (!bsm.id.equals(destation.id)) {//Long is also an Object......
             bsm=minpq.remove();
-            if(set.contains(bsm.id.toString())) continue;
+            if(set.contains(bsm.id.toString())) break;
             set.add(bsm.id.toString());
 
             for(Long adjkey:g.adjacent(bsm.id)){
@@ -68,6 +68,7 @@ public class Router {
 
                 if(minpq.contains(n)){//11,10
                     if(shortdistance.get(n.id.toString())>shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id)){
+                        minpq.remove(n);
                         n.preNode=bsm;
                         shortdistance.replace(n.id.toString(), shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id));
                         n.sumlength=shortdistance.get(n.id.toString());
@@ -77,18 +78,18 @@ public class Router {
                 else if(!set.contains(n.id.toString())){//00
                     n.preNode=bsm;
                     n.destationNode=destation;
-                    shortdistance.put(n.id.toString(), shortdistance.get(n.preNode.id.toString())+n.prelength());
+                    if(shortdistance.get(n.preNode.id.toString())+n.prelength()<shortdistance.get(n.id.toString())){
+                    shortdistance.put(n.id.toString(), shortdistance.get(n.preNode.id.toString())+n.prelength());}
                     n.sumlength=shortdistance.get(n.id.toString());
                     minpq.add(n);
                 }
-                /*else if(set.contains(n.id.toString())){//01
+                else if(set.contains(n.id.toString())){//01
                     if(shortdistance.get(n.id.toString())>shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id)){
                         n.preNode=bsm;
                         shortdistance.replace(n.id.toString(), shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id));
                         n.sumlength=shortdistance.get(n.id.toString());
-                        minpq.add(n);
                     }
-                }*/
+                }
             }
             if(minpq.isEmpty()) break;
         }
@@ -105,8 +106,8 @@ public class Router {
 
     public static void main(String[] args) {
         GraphDB graph=new GraphDB("../library-sp18/data/berkeley-2018.osm.xml");
-        List<Long> actual=Router.shortestPath(graph, -122.22938646460354, 37.83665820842015,
-        -122.29980246809829, 37.87519067303892);
+        List<Long> actual=Router.shortestPath(graph, -122.23641304032938, 37.84347012984306,
+        -122.28094940980871, 37.870043404781065);
         System.out.println(actual.size());
         System.out.println(actual);
     }
