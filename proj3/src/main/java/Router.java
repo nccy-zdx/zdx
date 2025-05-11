@@ -63,23 +63,24 @@ public class Router {
                 String adj=new String(sb1);
                 GraphDB.Node n=g.Nodes.get(adj);
 
-                if(minpq.contains(n)){
+                if(minpq.contains(n)){//11,10
                     if(n.sumlength>bsm.sumlength+g.distance(n.id, bsm.id)){
                         n.preNode=bsm;
                         n.sumlength=bsm.sumlength+n.prelength();
                     }
                 }
-                else if(!set.contains(adj)){
+                else if(!set.contains(adj)){//00
                     n.preNode=bsm;
                     n.destationNode=destation;
                     n.sumlength=bsm.sumlength+n.prelength();
                     minpq.add(n);
                 }
-                else if(!minpq.contains(n)&&set.contains(adj)){
+                else{//01
                     if(n.sumlength>bsm.sumlength+g.distance(n.id, bsm.id)){
                         n.preNode=bsm;
                         n.sumlength=bsm.sumlength+n.prelength();
                         minpq.add(n);
+                        set.remove(adj);
                     }
                 }
             }
