@@ -42,7 +42,6 @@ public class Router {
         StringBuffer sb=new StringBuffer();
         sb.append(g.closest(stlon, stlat));
         String startkey=new String(sb);
-
         StringBuffer sb0=new StringBuffer();
         sb0.append(g.closest(destlon, destlat));
         String destationkey=new String(sb0);
@@ -54,7 +53,7 @@ public class Router {
         GraphDB.Node bsm=start;
         bsm.preNode=null;
         bsm.destationNode=destation;
-        bsm.sumlength=0;
+        bsm.sumlength=0.0;
         minpq.add(bsm);
         shortdistance.put(bsm.id.toString(), 0.0);
 
@@ -78,18 +77,18 @@ public class Router {
                 else if(!set.contains(n.id.toString())){//00
                     n.preNode=bsm;
                     n.destationNode=destation;
-                    n.sumlength=shortdistance.get(n.preNode.id.toString())+n.prelength();
                     shortdistance.put(n.id.toString(), shortdistance.get(n.preNode.id.toString())+n.prelength());
+                    n.sumlength=shortdistance.get(n.id.toString());
                     minpq.add(n);
                 }
-                else if(set.contains(n.id.toString())){//01
+                /*else if(set.contains(n.id.toString())){//01
                     if(shortdistance.get(n.id.toString())>shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id)){
                         n.preNode=bsm;
                         shortdistance.replace(n.id.toString(), shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id));
                         n.sumlength=shortdistance.get(n.id.toString());
                         minpq.add(n);
                     }
-                }
+                }*/
             }
             if(minpq.isEmpty()) break;
         }
