@@ -54,13 +54,11 @@ public class GraphDB {
         }
 
         public double prelength(){
-            if(preNode==null) return 0;
-            else return distance(lon,lat,preNode.lon,preNode.lat);
+            return distance(lon,lat,preNode.lon,preNode.lat);
         }
 
         public double todestation(){
-            if(this==destationNode) return 0;
-            else return distance(lon,lat,destationNode.lon,destationNode.lat);
+            return distance(lon,lat,destationNode.lon,destationNode.lat);
         }
 
         @Override
