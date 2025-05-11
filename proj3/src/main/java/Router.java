@@ -82,6 +82,7 @@ public class Router {
                         n.preNode=bsm;
                         n.sumlength=bsm.sumlength+n.prelength();
                         minpq.add(n);
+                        set.remove(adj);
                     }
                 }
             }

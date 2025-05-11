@@ -35,7 +35,7 @@ public class GraphDB {
         List<Edge> Edges;
         Node preNode;
         Node destationNode;
-        double sumlength=100000;
+        double sumlength=100000000;
 
         public Node(String id,String lon,String lat){
             this.id=Long.parseLong(id);
