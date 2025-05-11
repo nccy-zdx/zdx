@@ -35,7 +35,7 @@ public class GraphDB {
         List<Edge> Edges;
         Node preNode;
         Node destationNode;
-        double sumlength=10000;
+        double sumlength=100000;
 
         public Node(String id,String lon,String lat){
             this.id=Long.parseLong(id);
@@ -58,18 +58,15 @@ public class GraphDB {
             else return distance(lon,lat,preNode.lon,preNode.lat);
         }
 
+        public double todestation(){
+            if(this==destationNode) return 0;
+            else return distance(lon,lat,destationNode.lon,destationNode.lat);
+        }
+
         @Override
         public int compareTo(Node n){
-            double this_todestation;
-            double todestation;
-
-            if(this==destationNode) this_todestation=0;
-            else this_todestation=distance(lon,lat,destationNode.lon,destationNode.lat);
-            if(n==destationNode) todestation=0;
-            else todestation=distance(n.lon,n.lat,destationNode.lon,destationNode.lat);
-
-            if(this_todestation+sumlength<todestation+n.sumlength) return -1;
-            else if(this_todestation+sumlength>todestation+n.sumlength) return 1;
+            if(todestation()+sumlength<n.todestation()+n.sumlength) return -1;
+            else if(todestation()+sumlength>n.todestation()+n.sumlength) return 1;
             else return 0;
         }
 

@@ -1,3 +1,5 @@
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,14 +52,12 @@ public class Router {
         bsm.preNode=null;
         bsm.destationNode=destation;
         bsm.sumlength=0;
-
         minpq.add(bsm);
         set.add(startkey);
 
         while (!bsm.id.equals(destation.id)) {//Long is also an Object......
             for(Long adjkey:g.adjacent(bsm.id)){
                 if(bsm.preNode!=null&&adjkey.equals(bsm.preNode.id)) continue;
-
                 StringBuffer sb1=new StringBuffer();
                 sb1.append(adjkey);
                 String adj=new String(sb1);
@@ -75,14 +75,20 @@ public class Router {
                     n.sumlength=bsm.sumlength+n.prelength();
                     minpq.add(n);
                 }
+                else if(!minpq.contains(n)&&set.contains(adj)){
+                    if(n.sumlength>bsm.sumlength+g.distance(n.id, bsm.id)){
+                        n.preNode=bsm;
+                        n.sumlength=bsm.sumlength+n.prelength();
+                        minpq.add(n);
+                    }
+                }
             }
             if(minpq.isEmpty()) break;
-            else bsm=minpq.poll();
+            else bsm=minpq.remove();
 
             StringBuffer sbb=new StringBuffer();
             sbb.append(bsm.id);
             String bsmid=new String(sbb);
-
             set.add(bsmid);
         }
 
@@ -90,12 +96,18 @@ public class Router {
             store.push(bsm.id);
             bsm=bsm.preNode;
         }
-
         while(!store.isEmpty()){
             shortestNode.add(store.pop());
         }
-
         return shortestNode;
+    }
+
+    public static void main(String[] args) {
+        GraphDB graph=new GraphDB("../library-sp18/data/berkeley-2018.osm.xml");
+        List<Long> actual=Router.shortestPath(graph, -122.27572799879053, 37.873826273550726,
+        -122.28924763881035, 37.83640692189568);
+        System.out.println(actual.size());
+        System.out.println(actual);
     }
 
     /**
