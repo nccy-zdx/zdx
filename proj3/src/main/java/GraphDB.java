@@ -265,17 +265,11 @@ public class GraphDB {
     }
 
     void addNode(Node n){
-        StringBuffer sb=new StringBuffer();
-        sb.append(n.id);
-        String id=new String(sb);
-        this.Nodes.put(id, n);
+        this.Nodes.put(n.id.toString(), n);
     }
 
     void addEdge(Edge e){
-        StringBuffer sb=new StringBuffer();
-        sb.append(e.id);
-        String id=new String(sb);
-        Edges.put(id, e);
+        Edges.put(e.id.toString(), e);
     }
   
 }

@@ -1,6 +1,8 @@
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +37,7 @@ public class Router {
         Stack<Long> store=new Stack<>();
         Set<String> set=new HashSet<>();
         PriorityQueue<GraphDB.Node> minpq=new PriorityQueue<>();
+        Map<String,Double> shortdistance=new HashMap<>();
 
         StringBuffer sb=new StringBuffer();
         sb.append(g.closest(stlon, stlat));
@@ -53,46 +56,42 @@ public class Router {
         bsm.destationNode=destation;
         bsm.sumlength=0;
         minpq.add(bsm);
-        set.add(startkey);
+        shortdistance.put(bsm.id.toString(), 0.0);
 
         while (!bsm.id.equals(destation.id)) {//Long is also an Object......
+            bsm=minpq.remove();
+            if(set.contains(bsm.id.toString())) continue;
+            set.add(bsm.id.toString());
+
             for(Long adjkey:g.adjacent(bsm.id)){
                 if(bsm.preNode!=null&&adjkey.equals(bsm.preNode.id)) continue;
-                StringBuffer sb1=new StringBuffer();
-                sb1.append(adjkey);
-                String adj=new String(sb1);
-                GraphDB.Node n=g.Nodes.get(adj);
+                GraphDB.Node n=g.Nodes.get(adjkey.toString());
 
                 if(minpq.contains(n)){//11,10
-                    if(n.sumlength>bsm.sumlength+g.distance(n.id, bsm.id)){
-                        minpq.remove(n);
+                    if(shortdistance.get(n.id.toString())>shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id)){
                         n.preNode=bsm;
-                        n.sumlength=bsm.sumlength+n.prelength();
+                        shortdistance.replace(n.id.toString(), shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id));
+                        n.sumlength=shortdistance.get(n.id.toString());
                         minpq.add(n);
                     }
                 }
-                else if(!set.contains(adj)){//00
+                else if(!set.contains(n.id.toString())){//00
                     n.preNode=bsm;
                     n.destationNode=destation;
-                    n.sumlength=bsm.sumlength+n.prelength();
+                    n.sumlength=shortdistance.get(n.preNode.id.toString())+n.prelength();
+                    shortdistance.put(n.id.toString(), shortdistance.get(n.preNode.id.toString())+n.prelength());
                     minpq.add(n);
                 }
-                else{//01
-                    if(n.sumlength>bsm.sumlength+g.distance(n.id, bsm.id)){
+                else if(set.contains(n.id.toString())){//01
+                    if(shortdistance.get(n.id.toString())>shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id)){
                         n.preNode=bsm;
-                        n.sumlength=bsm.sumlength+n.prelength();
+                        shortdistance.replace(n.id.toString(), shortdistance.get(bsm.id.toString())+g.distance(n.id, bsm.id));
+                        n.sumlength=shortdistance.get(n.id.toString());
                         minpq.add(n);
-                        set.remove(adj);
                     }
                 }
             }
             if(minpq.isEmpty()) break;
-            else bsm=minpq.remove();
-
-            StringBuffer sbb=new StringBuffer();
-            sbb.append(bsm.id);
-            String bsmid=new String(sbb);
-            set.add(bsmid);
         }
 
         while(bsm!=null){
@@ -113,7 +112,7 @@ public class Router {
         System.out.println(actual);
     }
 
-    /*
+    /**
      * Create the list of directions corresponding to a route on the graph.
      * @param g The graph to use.
      * @param route The route to translate into directions. Each element
