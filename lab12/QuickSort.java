@@ -44,16 +44,45 @@ public class QuickSort {
      * @param greater   An empty Queue. When the function completes, this queue will contain
      *                  all of the items in unsorted that are greater than the given pivot.
      */
-    private static <Item extends Comparable> void partition(
-            Queue<Item> unsorted, Item pivot,
-            Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
-        // Your code here!
+    private static <Item extends Comparable> void partition(Queue<Item> unsorted, Item pivot,Queue<Item> less, 
+    Queue<Item> equal, Queue<Item> greater) {
+        for(Item item:unsorted){
+            if(item.compareTo(pivot)<0){
+                less.enqueue(item);
+            }
+            else if(item.compareTo(pivot)>0){
+                greater.enqueue(item);
+            }
+            else{
+                equal.enqueue(item);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
-    public static <Item extends Comparable> Queue<Item> quickSort(
-            Queue<Item> items) {
-        // Your code here!
-        return items;
+    public static <Item extends Comparable> Queue<Item> quickSort(Queue<Item> items) {
+        if(items.size()==1||items.size()==0){
+            return items;
+        }
+        Queue<Item> less=new Queue<>();
+        Queue<Item> greater=new Queue<>();
+        Queue<Item> equal=new Queue<>();
+        partition(items, getRandomItem(items), less, equal, greater);
+        less=quickSort(less);
+        greater=quickSort(greater);
+        equal=quickSort(equal);
+        return catenate(less, catenate(equal, greater));
+    }
+
+    public static void main(String[] args) {
+        /*Used for test */
+        Queue<String> exams=new Queue<String>();
+        exams.enqueue("Synthetic Genomics");
+        exams.enqueue("Natural Medcine Synthetic Biology");
+        exams.enqueue("Pharmaceutical Technology");
+        exams.enqueue("Pharmaceutical Machine and Engineering Design");
+        exams.enqueue("Sports and Health");
+        System.out.println(exams);
+        System.out.println(QuickSort.quickSort(exams));
     }
 }
