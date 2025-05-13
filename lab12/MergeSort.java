@@ -91,11 +91,14 @@ public class MergeSort {
     public static void main(String[] args) {
         /*Used for test */
         Queue<String> exams=new Queue<String>();
-        exams.enqueue("Synthetic Genomics");
+        /*exams.enqueue("Synthetic Genomics");
         exams.enqueue("Nature Medcine Synthetic Biology");
         exams.enqueue("Pharmaceutical Technology");
         exams.enqueue("Pharmaceutical Machine and Engineering Design");
-        exams.enqueue("Sports and Health");
+        exams.enqueue("Sports and Health");*/
+        for(int i=0;i<10000;++i){
+            exams.enqueue("num:"+i);
+        }
         System.out.println(exams);
         System.out.println(MergeSort.mergeSort(exams));
     }

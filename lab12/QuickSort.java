@@ -61,13 +61,12 @@ public class QuickSort {
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(Queue<Item> items) {
-        if(items.size()==1||items.size()==0){
-            return items;
-        }
+        if(items.size()==1||items.size()==0) return items;
         Queue<Item> less=new Queue<>();
         Queue<Item> greater=new Queue<>();
         Queue<Item> equal=new Queue<>();
         partition(items, getRandomItem(items), less, equal, greater);
+        if(equal.size()==items.size()) return items;
         less=quickSort(less);
         greater=quickSort(greater);
         equal=quickSort(equal);
@@ -77,11 +76,6 @@ public class QuickSort {
     public static void main(String[] args) {
         /*Used for test */
         Queue<String> exams=new Queue<String>();
-        exams.enqueue("Synthetic Genomics");
-        exams.enqueue("Natural Medcine Synthetic Biology");
-        exams.enqueue("Pharmaceutical Technology");
-        exams.enqueue("Pharmaceutical Machine and Engineering Design");
-        exams.enqueue("Sports and Health");
         System.out.println(exams);
         System.out.println(QuickSort.quickSort(exams));
     }
