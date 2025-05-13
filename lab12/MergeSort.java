@@ -73,7 +73,7 @@ public class MergeSort {
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(Queue<Item> items) {
-        if(items.size()==1) return items;
+        if(items.size()==1||items.size()==0) return items;
         Queue<Item> q1=new Queue<>();
         Queue<Item> q2=new Queue<>();
         int count=0;
@@ -96,9 +96,6 @@ public class MergeSort {
         exams.enqueue("Pharmaceutical Technology");
         exams.enqueue("Pharmaceutical Machine and Engineering Design");
         exams.enqueue("Sports and Health");*/
-        for(int i=0;i<10000;++i){
-            exams.enqueue("num:"+i);
-        }
         System.out.println(exams);
         System.out.println(MergeSort.mergeSort(exams));
     }
