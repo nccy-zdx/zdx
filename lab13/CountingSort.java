@@ -69,6 +69,7 @@ public class CountingSort {
         int[] sort=new int[arr.length];
         int min=Integer.MAX_VALUE;
         int max=Integer.MIN_VALUE;
+        if(arr.length==0) return arr;
         for(int i:arr){
             max=max>i ? max:i;
             min=min<i ? min:i;

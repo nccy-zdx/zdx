@@ -79,25 +79,6 @@ public class RadixSort {
         return pad;
     }
 
-    public static void main(String[] args) {
-        String[] life=new String[10];
-        life[0]="2";
-        life[1]="100";
-        life[2]="3";
-        life[3]="5";
-        life[4]="15";
-        life[5]="25";
-        life[6]="1000";
-        life[7]="648962";
-        life[8]="10000";
-        life[9]="0";
-        sort(life);
-        /*for(int i=0;i<life.length;++i){
-            System.out.println(life[i]);
-            System.out.println(sort(life)[i]);
-        }*/
-    }
-
     /**
      * MSD radix sort helper function that recursively calls itself to achieve the sorted array.
      * Destructive method that changes the passed in array, asciis.
