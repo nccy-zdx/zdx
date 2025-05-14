@@ -19,15 +19,13 @@ public class RadixSort {
     public static String[] sort(String[] asciis) {
         String[] sort=new String[asciis.length];
         int max=Integer.MIN_VALUE;
-        int count=0;
+        System.arraycopy(asciis, 0, sort, 0, sort.length);
         for(String str:asciis){
-            sort[count]=str;
-            ++count;
             max=max>str.length() ? max:str.length();
         }
         maxlength=max;
         for(int i=0;i<max;++i){
-            sortHelperLSD(sort, i);
+            sortHelperLSD(sort, max-i-1);
         }
         return sort;
     }
@@ -74,6 +72,26 @@ public class RadixSort {
             pad+="_";
         }
         return pad;
+    }
+
+    public static void main(String[] args) {
+        String[] data=new String[12];
+        data[0]="103";
+        data[1]="197";
+        data[2]="237";
+        data[3]="35";
+        data[4]="115";
+        data[5]="52";
+        data[6]="141";
+        data[7]="126";
+        data[8]="163";
+        data[9]="169";
+        data[10]="120";
+        data[11]="91";
+        String[] strs=sort(data);
+        for(int i=0;i<strs.length;++i){
+            System.out.println(strs[i]);
+        }
     }
 
     /**
