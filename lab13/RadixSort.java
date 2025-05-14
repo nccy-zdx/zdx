@@ -29,9 +29,6 @@ public class RadixSort {
         for(int i=0;i<max;++i){
             sortHelperLSD(sort, i);
         }
-        for(int i=0;i<sort.length;++i){
-            System.out.println(sort[i]);
-        }
         return sort;
     }
 
