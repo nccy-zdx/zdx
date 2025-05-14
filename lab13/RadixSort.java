@@ -81,7 +81,7 @@ public class RadixSort {
         System.out.println(sum);
         System.out.println(sum1);
 
-        /*data[0]="103";
+        data[0]="103";
         data[1]="197";
         data[2]="237";
         data[3]="35";
@@ -96,7 +96,7 @@ public class RadixSort {
         String[] strs=sort(data);
         for(int i=0;i<strs.length;++i){
             System.out.println(strs[i]);
-        }*/
+        }
     }*/
 
     /**
