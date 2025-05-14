@@ -74,9 +74,14 @@ public class RadixSort {
         return pad;
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         String[] data=new String[12];
-        data[0]="103";
+        int sum=95+114+145+212+280+338+413+495+557+611+632+650+680+699+727+749+765+795+814+822+870;
+        int sum1=909+1076+1158+1179+1222+1237+1275+1269+1297+1329;
+        System.out.println(sum);
+        System.out.println(sum1);
+
+        /*data[0]="103";
         data[1]="197";
         data[2]="237";
         data[3]="35";
@@ -91,8 +96,8 @@ public class RadixSort {
         String[] strs=sort(data);
         for(int i=0;i<strs.length;++i){
             System.out.println(strs[i]);
-        }
-    }
+        }*/
+    }*/
 
     /**
      * MSD radix sort helper function that recursively calls itself to achieve the sorted array.
