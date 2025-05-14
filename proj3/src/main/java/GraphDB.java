@@ -53,7 +53,7 @@ public class GraphDB {
             Edges=new ArrayList<>();
         }
 
-        public double prelength(){
+        public double prelength(){//probably here has something wrong because it`s not the path distance but great-circle distance.
             return distance(lon,lat,preNode.lon,preNode.lat);
         }
 

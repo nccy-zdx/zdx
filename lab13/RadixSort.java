@@ -15,9 +15,24 @@ public class RadixSort {
      *
      * @return String[] the sorted array
      */
+    private static int maxlength;
     public static String[] sort(String[] asciis) {
-        // TODO: Implement LSD Sort
-        return null;
+        String[] sort=new String[asciis.length];
+        int max=Integer.MIN_VALUE;
+        int count=0;
+        for(String str:asciis){
+            sort[count]=str;
+            ++count;
+            max=max>str.length() ? max:str.length();
+        }
+        maxlength=max;
+        for(int i=0;i<max;++i){
+            sortHelperLSD(sort, i);
+        }
+        for(int i=0;i<sort.length;++i){
+            System.out.println(sort[i]);
+        }
+        return sort;
     }
 
     /**
@@ -27,8 +42,60 @@ public class RadixSort {
      * @param index The position to sort the Strings on.
      */
     private static void sortHelperLSD(String[] asciis, int index) {
-        // Optional LSD helper method for required LSD radix sort
+        String[] fixed=new String[asciis.length];
+        for(int i=0;i<asciis.length;++i){
+            if(asciis[i].length()<maxlength){
+                fixed[i]=pad(asciis[i], maxlength-asciis[i].length());
+            }
+            else{
+                fixed[i]=asciis[i];
+            }
+        }
+        int[] count=new int[256];
+        for(String str:fixed){
+            ++count[str.charAt(index)];
+        }
+        int[] starts=new int[256];
+        int pos=0;
+        for(int i=0;i<starts.length;++i){
+            starts[i]=pos;
+            pos+=count[i];
+        }
+        String[] sort=new String[asciis.length];
+        for(int i=0;i<asciis.length;++i){
+            String str=fixed[i];
+            int position=starts[str.charAt(index)];
+            sort[position]=asciis[i];
+            starts[str.charAt(index)]+=1;
+        }
+        System.arraycopy(sort, 0, asciis, 0, sort.length);
         return;
+    }
+
+    private static String pad(String pad,int num){
+        for(int i=0;i<num;++i){
+            pad+="_";
+        }
+        return pad;
+    }
+
+    public static void main(String[] args) {
+        String[] life=new String[10];
+        life[0]="2";
+        life[1]="100";
+        life[2]="3";
+        life[3]="5";
+        life[4]="15";
+        life[5]="25";
+        life[6]="1000";
+        life[7]="648962";
+        life[8]="10000";
+        life[9]="0";
+        sort(life);
+        /*for(int i=0;i<life.length;++i){
+            System.out.println(life[i]);
+            System.out.println(sort(life)[i]);
+        }*/
     }
 
     /**
