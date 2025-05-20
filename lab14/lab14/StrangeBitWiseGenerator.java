@@ -2,11 +2,11 @@ package lab14;
 
 import lab14lib.Generator;
 
-public class StrangeBitWiseGenerator implements Generator{
+public class StrangeBitwiseGenerator implements Generator{
         private int state;
     private int period;
 
-    public StrangeBitWiseGenerator(int period){
+    public StrangeBitwiseGenerator(int period){
         this.period=period;
         state=0;
     }
