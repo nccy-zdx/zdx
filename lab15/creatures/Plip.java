@@ -1,11 +1,15 @@
 package creatures;
 import huglife.Creature;
 import huglife.Direction;
+import huglife.Empty;
 import huglife.Action;
 import huglife.Occupant;
 import huglife.HugLifeUtils;
+import huglife.Impassible;
+
 import java.awt.Color;
 import java.util.Map;
+import java.util.Random;
 import java.util.List;
 
 /** An implementation of a motile pacifist photosynthesizer.
@@ -42,7 +46,10 @@ public class Plip extends Creature {
      *  that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        r=99;
+        b=76;
+        if(energy>=2) energy=2;
+        g = (int)((255-63)/2*energy+63);
         return color(r, g, b);
     }
 
@@ -55,11 +62,15 @@ public class Plip extends Creature {
      *  private static final variable. This is not required for this lab.
      */
     public void move() {
+        energy-=0.15;
     }
 
 
     /** Plips gain 0.2 energy when staying due to photosynthesis. */
     public void stay() {
+        if(energy>=2) energy=2;
+        else if(energy+0.2>=2) energy=2;
+        else energy+=0.2;
     }
 
     /** Plips and their offspring each get 50% of the energy, with none
@@ -67,7 +78,9 @@ public class Plip extends Creature {
      *  Plip.
      */
     public Plip replicate() {
-        return this;
+        Plip descendant=new Plip(energy/2.0);
+        energy=energy/2.0;
+        return descendant;
     }
 
     /** Plips take exactly the following actions based on NEIGHBORS:
@@ -81,7 +94,50 @@ public class Plip extends Creature {
      *  for an example to follow.
      */
     public Action chooseAction(Map<Direction, Occupant> neighbors) {
+        
+        if(!hasEmpty(neighbors)){
+            return new Action(Action.ActionType.STAY);
+        }
+        else if(energy>1.0){
+            for(Direction dir:neighbors.keySet()){
+                if(neighbors.get(dir).name().equals("empty")){
+                    return new Action(Action.ActionType.REPLICATE, dir);
+                }
+            }
+        }
+        else if(IsClorus(neighbors)){
+            for(Direction dir:neighbors.keySet()){
+                if(neighbors.get(dir).name().equals("empty")){
+                    Random r=new Random();
+                    if(r.nextInt(1)==0){
+                        return new Action(Action.ActionType.MOVE, dir);
+                    }
+                    else{
+                        //return new Action(Action.ActionType.MOVE, dir);
+                        return new Action(Action.ActionType.STAY);
+                    }
+                }
+            }
+        }
         return new Action(Action.ActionType.STAY);
+    }
+
+    private boolean IsClorus(Map<Direction, Occupant> neighbors){
+        for(Occupant oc:neighbors.values()){
+            if(oc.name().equals("clorus")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasEmpty(Map<Direction, Occupant> neighbors){
+        for(Occupant oc:neighbors.values()){
+            if(oc.name().equals("empty")){
+                return true;
+            }
+        }
+        return false;
     }
 
 }
