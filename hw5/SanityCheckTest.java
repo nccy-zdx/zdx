@@ -23,7 +23,6 @@ public class SanityCheckTest {
                 p.set(i, j, new Color(colorVals[0], colorVals[1], colorVals[2]));
             }
         }
-
         SeamCarver sc = new SeamCarver(p);
         double[][] energy = new double[3][4];
         for (int i = 0; i < 3; i++) {

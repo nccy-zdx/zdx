@@ -1,0 +1,57 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "PrintEnergy",
+            "request": "launch",
+            "mainClass": "PrintEnergy",
+            "projectName": "hw5_7fd7bbf8"
+        },
+        {
+            "type": "java",
+            "name": "PrintSeams",
+            "request": "launch",
+            "mainClass": "PrintSeams",
+            "projectName": "hw5_7fd7bbf8"
+        },
+        {
+            "type": "java",
+            "name": "SanityCheckTest",
+            "request": "launch",
+            "mainClass": "SanityCheckTest",
+            "projectName": "hw5_7fd7bbf8"
+        },
+        {
+            "type": "java",
+            "name": "SeamCarverVisualizer",
+            "request": "launch",
+            "mainClass": "SeamCarverVisualizer",
+            "args": "images/HJoceanSmall.png 50 y",
+            "projectName": "hw5_7fd7bbf8"
+        },
+        {
+            "type": "java",
+            "name": "ShowEnergy",
+            "request": "launch",
+            "mainClass": "ShowEnergy",
+            "projectName": "hw5_7fd7bbf8"
+        },
+        {
+            "type": "java",
+            "name": "ShowSeams",
+            "request": "launch",
+            "mainClass": "ShowSeams",
+            "projectName": "hw5_7fd7bbf8"
+        }
+    ]
+}

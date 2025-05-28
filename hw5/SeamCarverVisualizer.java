@@ -83,7 +83,7 @@ public class SeamCarverVisualizer {
             JMenuItem menuItem1 = new JMenuItem(" Save...   ");
             menuItem1.addActionListener(img);
             menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-                                     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                                     Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
             menu.add(menuItem1);
             frame.setJMenuBar(menuBar);
 
