@@ -118,6 +118,5 @@ public class SeamCarverVisualizer {
         } else {
             scv.visualizeVerticalCarve(sc, N);
         }
-        System.out.println(100);
     }
 }

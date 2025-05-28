@@ -158,12 +158,9 @@ public class SeamCarver {
 
         @Override
         public int compareTo(Node n){
-            if(n.previous/n.rownum-n.rownum>previous/rownum-rownum) return -1;
-            else if(n.previous/n.rownum-n.rownum<previous/rownum-rownum) return 1;
+            if(n.previous/n.rownum>previous/rownum) return -1;
+            else if(n.previous/n.rownum<previous/rownum) return 1;
             else return 0;
-            /*if(n.energy>energy) return -1;
-            else if(n.energy<energy) return 1;
-            else return 0; */
         }
 
         @Override
@@ -178,7 +175,7 @@ public class SeamCarver {
 
         @Override
         public int hashCode() {
-            return colnum*((int)Math.pow(2, 31))+rownum;
+            return colnum<<31+rownum;
         }
     }
 
