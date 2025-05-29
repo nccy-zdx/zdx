@@ -1,80 +1,79 @@
-import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashSet;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.Set;
 
 import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.Picture;
 
-public class SeamCarver {
-    private Picture picture;
-    private double[][] previouss;
+public class test {
+    private final int height=6;
+    private final int width=4;
+    public double[][] energies=new double[height][width];
+    public double minEnergy=0;
+    public double maxEnergy=0;
+    public double mediumenergy=0;
+    public double[][] previouss=new double[height][width];
 
-    public SeamCarver(Picture picture){
-        this.picture=picture;
-        previouss=new double[picture.height()][picture.width()];
+    public test(String filename){
+        File f=new File(filename);
+        try{
+            Scanner s=new Scanner(f);
+            int row=0;
+            while(s.hasNextLine()){
+                String temp=s.nextLine();
+                String[] strs=temp.split("  ");
+                for(int i=0;i<strs.length;++i){
+                    energies[row][i]=Double.parseDouble(strs[i]);
+                }
+                ++row;
+            }
+            setMinEnergy();
+            setMaxEnergy();
+            mediumenergy=(maxEnergy+minEnergy)/2.0;
+            s.close();
+        }
+        catch(FileNotFoundException e){
+
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+
+        }
     }
     
-    public Picture picture(){
-        return picture;
-    }
-
-    public int width(){
-        return picture.width();
-    }
-
-    public int height(){
-        return picture.height();
-    }
-
-    public double energy(int x,int y){
-        if(x<0||x>=picture.width()||y<0||y>=picture.height()) throw new IndexOutOfBoundsException("col:"+x+"  row:"+y);
-        double rx,gx,bx,ry,gy,by,sumx,sumy;
-        Color front,back,upper,down;
-
-        if(x==picture.width()-1) front=picture.get(0, y);
-        else front=picture.get(x+1, y);
-        if(x==0) back=picture.get(picture.width()-1, y);
-        else back=picture.get(x-1, y);
-        if(y==picture.height()-1) down=picture.get(x, 0);
-        else down=picture.get(x, y+1);
-        if(y==0) upper=picture.get(x, picture.height()-1);
-        else upper=picture.get(x, y-1);
-
-        rx=Math.abs(front.getRed()-back.getRed());
-        gx=Math.abs(front.getGreen()-back.getGreen());
-        bx=Math.abs(front.getBlue()-back.getBlue());
-        ry=Math.abs(down.getRed()-upper.getRed());
-        gy=Math.abs(down.getGreen()-upper.getGreen());
-        by=Math.abs(down.getBlue()-upper.getBlue());
-
-        sumx=rx*rx+gx*gx+bx*bx;
-        sumy=ry*ry+gy*gy+by*by;
-
-        return sumx+sumy;
-    } 
-
-    public int[] findHorizontalSeam(){
-        Picture transpicture=new Picture(picture.height(), picture.width());
-        for(int i=0;i<picture.width();++i){
-            for(int j=0;j<picture.height();++j){
-                transpicture.set(j, i, picture.get(i, j));
+    private void setMinEnergy(){
+        double min=energies[0][0];
+        for(int i=0;i<width;++i){
+            for(int j=0;j<height;++j){
+                if(energies[j][i]<=min) min=energies[j][i];
             }
         }
-        Picture reservepic=new Picture(picture);
-        picture=transpicture;
-        int[] shortpath=findVerticalSeam();
-        picture=reservepic;
-        return shortpath;
+        minEnergy=min;
+    }
+
+    private void setMaxEnergy(){
+        double max=energies[0][0];
+        for(int i=0;i<width;++i){
+            for(int j=0;j<height;++j){
+                if(energies[j][i]>=max) max=energies[j][i];
+            }
+        }
+        maxEnergy=max;
+    }
+
+    public double energy(int col,int row){
+        return energies[row][col];
     }
 
     public int[] findVerticalSeam(){
-        int[] shortpath=new int[picture.height()];
-        MinPQ<Node> path=new MinPQ<>();
-        for(int i=0;i<picture.width();++i){
+        int[] shortpath=new int[height];
+        PriorityQueue<Node> path=new PriorityQueue<>();
+        for(int i=0;i<width;++i){
             Node row=new Node(energy(i, 0), i, 0, 0, null,0);
-            for(int j=0;j<picture.width();++j){
-                double goalenergy=energy(j, picture.height()-1);
+            for(int j=0;j<width;++j){
+                double goalenergy=energy(j, height-1);
                 PriorityQueue<Node> pq=new PriorityQueue<>();
                 Set<Node> set=new HashSet<>();
                 pq.add(row);
@@ -82,10 +81,10 @@ public class SeamCarver {
                     Node bsm=pq.remove();
                     previouss[bsm.rownum][bsm.colnum]=bsm.previous;
                     if(set.contains(bsm)) continue;
-                    else set.add(bsm);
-                    if(bsm.rownum==picture.height()-1){
+                    else if(!set.contains(bsm)&&bsm.rownum!=height-1&&bsm.colnum!=j) set.add(bsm);
+                    if(bsm.rownum==height-1){
                         if(bsm.colnum==j){
-                            path.insert(bsm);
+                            path.add(bsm);
                             break;
                         }
                         else continue;
@@ -104,7 +103,7 @@ public class SeamCarver {
                         }
                         else if(!pq.contains(n2)) pq.add(n2);
                     }
-                    else if(bsm.colnum==picture.width()-1){
+                    else if(bsm.colnum==width-1){
                         Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
@@ -141,7 +140,7 @@ public class SeamCarver {
                 }
             }
         }
-        Node minNode=path.delMin();
+        Node minNode=path.remove();
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
             minNode=minNode.preNode;
@@ -157,16 +156,16 @@ public class SeamCarver {
             if(energy1>energy2) return energy2;
             else return energy1;
         }
-        else if(n.colnum==picture.width()-1){
-            double energy1=previouss[n.rownum-1][picture.width()-1];
-            double energy2=previouss[n.rownum-1][picture.width()-2];
+        else if(n.colnum==width-1){
+            double energy1=previouss[n.rownum-1][width-1];
+            double energy2=previouss[n.rownum-1][width-2];
             if(energy1>energy2) return energy2;
             else return energy1;
         }
         else{
             double energy1=previouss[n.rownum-1][n.colnum];
             double energy2=previouss[n.rownum-1][n.colnum+1];
-            double energy3=previouss[n.rownum-1][n.colnum-1];;
+            double energy3=previouss[n.rownum-1][n.colnum-1];
             if(energy1>energy2&&energy3>energy2) return energy2;
             else if(energy3>energy1&&energy2>energy1) return energy1;
             else return energy3;
@@ -192,8 +191,8 @@ public class SeamCarver {
 
         @Override
         public int compareTo(Node n){        
-            if(n.previous>previous) return -1;
-            else if(n.previous<previous) return 1;
+            if(n.previous+h(n)>previous+h(this)) return -1;
+            else if(n.previous+h(n)<previous+h(this)) return 1;
             else return 0;
         }
 
@@ -213,14 +212,18 @@ public class SeamCarver {
         }
     }
 
-    public void removeHorizontalSeam(int[] seam){
-        if(seam.length!=picture.width()) throw new IllegalArgumentException();
-        SeamRemover.removeHorizontalSeam(picture, seam);
+    private double h(Node n){
+        return 0;
     }
 
-    public void removeVerticalSeam(int[] seam){
-        if(seam.length!=picture.height()) throw new IllegalArgumentException();
-        SeamRemover.removeVerticalSeam(picture, seam);
+    public static void main(String[] args) {
+        test t=new test("test1.txt");
+        int[] seam=t.findVerticalSeam();
+        double sumseam=0;
+        for(int i=0;i<seam.length;++i){
+            //System.out.println(seam[i]+"   "+t.energy(seam[i], i));
+            sumseam+=t.energy(seam[i], i);
+        }
+        System.out.println(sumseam);
     }
-
 }
