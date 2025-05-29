@@ -81,8 +81,11 @@ public class SeamCarver {
                     if(set.contains(bsm)) continue;
                     else set.add(bsm);
                     if(bsm.rownum==picture.height()-1){
-                        path.insert(bsm);
-                        break;
+                        if(bsm.colnum==j){
+                            path.insert(bsm);
+                            break;
+                        }
+                        else continue;
                     }
                     else if(bsm.colnum==0){
                         Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
@@ -134,9 +137,7 @@ public class SeamCarver {
                     }
                 }
             }
-
         }
-
         Node minNode=path.delMin();
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
@@ -188,8 +189,8 @@ public class SeamCarver {
 
         @Override
         public int compareTo(Node n){        
-            if(n.previous+(picture.height()-1-n.rownum)*goalenergy>previous+(picture.height()-1-rownum)*goalenergy) return -1;
-            else if(n.previous+(picture.height()-1-n.rownum)*goalenergy<previous+(picture.height()-1-rownum)*goalenergy) return 1;
+            if(n.previous+(picture.height()-1-n.rownum)*n.goalenergy>previous+(picture.height()-1-rownum)*goalenergy) return -1;
+            else if(n.previous+(picture.height()-1-n.rownum)*n.goalenergy<previous+(picture.height()-1-rownum)*goalenergy) return 1;
             else return 0;
         }
 
