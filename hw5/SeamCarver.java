@@ -93,12 +93,12 @@ public class SeamCarver {
                     else if(bsm.colnum==0){
                         Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
-                        if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
+                        if(pq.contains(n1)&&bsm.previous<minUpperPrevious(n1)){
                             pq.remove(n1);
                             pq.add(n1);
                         }
                         else if(!pq.contains(n1)) pq.add(n1);
-                        if(pq.contains(n2)&&bsm.previous<=minUpperPrevious(n2)){
+                        if(pq.contains(n2)&&bsm.previous<minUpperPrevious(n2)){
                             pq.remove(n2);
                             pq.add(n2);
                         }
@@ -107,12 +107,12 @@ public class SeamCarver {
                     else if(bsm.colnum==picture.width()-1){
                         Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
-                        if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
+                        if(pq.contains(n1)&&bsm.previous<minUpperPrevious(n1)){
                             pq.remove(n1);
                             pq.add(n1);
                         }
                         else if(!pq.contains(n1)) pq.add(n1);
-                        if(pq.contains(n2)&&bsm.previous<=minUpperPrevious(n2)){
+                        if(pq.contains(n2)&&bsm.previous<minUpperPrevious(n2)){
                             pq.remove(n2);
                             pq.add(n2);
                         }
@@ -122,17 +122,17 @@ public class SeamCarver {
                         Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
-                        if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
+                        if(pq.contains(n1)&&bsm.previous<minUpperPrevious(n1)){
                             pq.remove(n1);
                             pq.add(n1);
                         }
                         else if(!pq.contains(n1)) pq.add(n1);
-                        if(pq.contains(n2)&&bsm.previous<=minUpperPrevious(n2)){
+                        if(pq.contains(n2)&&bsm.previous<minUpperPrevious(n2)){
                             pq.remove(n2);
                             pq.add(n2);
                         }
                         else if(!pq.contains(n2)) pq.add(n2);
-                        if(pq.contains(n3)&&bsm.previous<=minUpperPrevious(n3)){
+                        if(pq.contains(n3)&&bsm.previous<minUpperPrevious(n3)){
                             pq.remove(n3);
                             pq.add(n3);
                         }

@@ -70,6 +70,11 @@ public class test {
     public int[] findVerticalSeam(){
         int[] shortpath=new int[height];
         PriorityQueue<Node> path=new PriorityQueue<>();
+        for(int i=0;i<height;++i){
+            for(int j=0;j<width;++j){
+                previouss[i][j]=minEnergy;
+            }
+        }
         for(int i=0;i<width;++i){
             Node row=new Node(energy(i, 0), i, 0, 0, null,0);
             for(int j=0;j<width;++j){
@@ -92,50 +97,78 @@ public class test {
                     else if(bsm.colnum==0){
                         Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
-                        if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
+                        if(pq.contains(n1)&&bsm.previous<minUpperPrevious(n1)){
                             pq.remove(n1);
                             pq.add(n1);
+                            previouss[n1.rownum][n1.colnum]=n1.previous;
                         }
-                        else if(!pq.contains(n1)) pq.add(n1);
-                        if(pq.contains(n2)&&bsm.previous<=minUpperPrevious(n2)){
+                        else if(!pq.contains(n1)){
+                            pq.add(n1);
+                            previouss[n1.rownum][n1.colnum]=n1.previous;
+                        }
+                        if(pq.contains(n2)&&bsm.previous<minUpperPrevious(n2)){
                             pq.remove(n2);
                             pq.add(n2);
+                            previouss[n2.rownum][n2.colnum]=n2.previous;
                         }
-                        else if(!pq.contains(n2)) pq.add(n2);
+                        else if(!pq.contains(n2)){
+                            pq.add(n2);
+                            previouss[n2.rownum][n2.colnum]=n2.previous;
+                        }
                     }
                     else if(bsm.colnum==width-1){
                         Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
-                        if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
+                        if(pq.contains(n1)&&bsm.previous<minUpperPrevious(n1)){
                             pq.remove(n1);
                             pq.add(n1);
+                            previouss[n1.rownum][n1.colnum]=n1.previous;
                         }
-                        else if(!pq.contains(n1)) pq.add(n1);
-                        if(pq.contains(n2)&&bsm.previous<=minUpperPrevious(n2)){
+                        else if(!pq.contains(n1)){
+                            pq.add(n1);
+                            previouss[n1.rownum][n1.colnum]=n1.previous;
+                        }
+                        if(pq.contains(n2)&&bsm.previous<minUpperPrevious(n2)){
                             pq.remove(n2);
                             pq.add(n2);
+                            previouss[n2.rownum][n2.colnum]=n2.previous;
                         }
-                        else if(!pq.contains(n2)) pq.add(n2);
+                        else if(!pq.contains(n2)){
+                            pq.add(n2);
+                            previouss[n2.rownum][n2.colnum]=n2.previous;
+                        }
                     }
                     else{
                         Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
                         Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
-                        if(pq.contains(n1)&&bsm.previous<=minUpperPrevious(n1)){
+                        if(pq.contains(n1)&&bsm.previous<minUpperPrevious(n1)){
                             pq.remove(n1);
                             pq.add(n1);
+                            previouss[n1.rownum][n1.colnum]=n1.previous;
                         }
-                        else if(!pq.contains(n1)) pq.add(n1);
-                        if(pq.contains(n2)&&bsm.previous<=minUpperPrevious(n2)){
+                        else if(!pq.contains(n1)){
+                            pq.add(n1);
+                            previouss[n1.rownum][n1.colnum]=n1.previous;
+                        }
+                        if(pq.contains(n2)&&bsm.previous<minUpperPrevious(n2)){
                             pq.remove(n2);
                             pq.add(n2);
+                            previouss[n2.rownum][n2.colnum]=n2.previous;
                         }
-                        else if(!pq.contains(n2)) pq.add(n2);
-                        if(pq.contains(n3)&&bsm.previous<=minUpperPrevious(n3)){
+                        else if(!pq.contains(n2)){
+                            pq.add(n2);
+                            previouss[n2.rownum][n2.colnum]=n2.previous;
+                        }
+                        if(pq.contains(n3)&&bsm.previous<minUpperPrevious(n3)){
                             pq.remove(n3);
                             pq.add(n3);
+                            previouss[n3.rownum][n3.colnum]=n3.previous;
                         }
-                        else if(!pq.contains(n3)) pq.add(n3);
+                        else if(!pq.contains(n3)){
+                            pq.add(n3);
+                            previouss[n3.rownum][n3.colnum]=n3.previous;
+                        }
                     }
                 }
             }
