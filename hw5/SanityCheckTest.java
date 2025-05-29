@@ -35,7 +35,7 @@ public class SanityCheckTest {
 
     @Test
     public void sanityVerticalSeamTest() {
-        Picture p = new Picture("images/7x10.png");
+        Picture p = new Picture("images/12x10.png");
         SeamCarver sc = new SeamCarver(p);
 
         int[] seam = sc.findVerticalSeam();
