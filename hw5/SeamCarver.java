@@ -26,7 +26,7 @@ public class SeamCarver {
     }
 
     public double energy(int x,int y){
-        if(x<0||x>=picture.width()||y<0||y>=picture.height()) throw new IndexOutOfBoundsException("coordinates are out of bound.");
+        if(x<0||x>=picture.width()||y<0||y>=picture.height()) throw new IndexOutOfBoundsException("col:"+x+"  row:"+y);
         double rx,gx,bx,ry,gy,by,sumx,sumy;
         Color front,back,upper,down;
 
@@ -70,68 +70,73 @@ public class SeamCarver {
         int[] shortpath=new int[picture.height()];
         MinPQ<Node> path=new MinPQ<>();
         for(int i=0;i<picture.width();++i){
-            Node row0=new Node(energy(i, 0), i, 0,0,null);
-            PriorityQueue<Node> pq=new PriorityQueue<>();
-            Set<Node> set=new HashSet<>();
-            pq.add(row0);
-            while (!pq.isEmpty()) {
-                Node bsm=pq.remove();
-                if(set.contains(bsm)) continue;
-                else set.add(bsm);
-                if(bsm.rownum==picture.height()-1){
-                    path.insert(bsm);
-                    break;
-                }
-                else if(bsm.colnum==0){
-                    Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    if(pq.contains(n1)){
-                        pq.remove(n1);
-                        pq.add(n1);
+            Node row=new Node(energy(i, 0), i, 0, 0, null,0);
+            for(int j=0;j<picture.width();++j){
+                double goalenergy=energy(j, picture.height()-1);
+                PriorityQueue<Node> pq=new PriorityQueue<>();
+                Set<Node> set=new HashSet<>();
+                pq.add(row);
+                while(!pq.isEmpty()){
+                    Node bsm=pq.remove();
+                    if(set.contains(bsm)) continue;
+                    else set.add(bsm);
+                    if(bsm.rownum==picture.height()-1){
+                        path.insert(bsm);
+                        break;
                     }
-                    else pq.add(n1);
-                    if(pq.contains(n2)){
-                        pq.remove(n2);
-                        pq.add(n2);
+                    else if(bsm.colnum==0){
+                        Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        if(pq.contains(n1)&&bsm.energy<=minUpperEnergy(n1)){
+                            pq.remove(n1);
+                            pq.add(n1);
+                        }
+                        else if(!pq.contains(n1)) pq.add(n1);
+                        if(pq.contains(n2)&&bsm.energy<=minUpperEnergy(n2)){
+                            pq.remove(n2);
+                            pq.add(n2);
+                        }
+                        else if(!pq.contains(n2)) pq.add(n2);
                     }
-                    else pq.add(n2);
-                }
-                else if(bsm.colnum==picture.width()-1){
-                    Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
-                    Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    if(pq.contains(n1)){
-                        pq.remove(n1);
-                        pq.add(n1);
+                    else if(bsm.colnum==picture.width()-1){
+                        Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        if(pq.contains(n1)&&bsm.energy<=minUpperEnergy(n1)){
+                            pq.remove(n1);
+                            pq.add(n1);
+                        }
+                        else if(!pq.contains(n1)) pq.add(n1);
+                        if(pq.contains(n2)&&bsm.energy<=minUpperEnergy(n2)){
+                            pq.remove(n2);
+                            pq.add(n2);
+                        }
+                        else if(!pq.contains(n2)) pq.add(n2);
                     }
-                    else pq.add(n1);
-                    if(pq.contains(n2)){
-                        pq.remove(n2);
-                        pq.add(n2);
+                    else{
+                        Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm,goalenergy);
+                        if(pq.contains(n1)&&bsm.energy<=minUpperEnergy(n1)){
+                            pq.remove(n1);
+                            pq.add(n1);
+                        }
+                        else if(!pq.contains(n1)) pq.add(n1);
+                        if(pq.contains(n2)&&bsm.energy<=minUpperEnergy(n2)){
+                            pq.remove(n2);
+                            pq.add(n2);
+                        }
+                        else if(!pq.contains(n2)) pq.add(n2);
+                        if(pq.contains(n3)&&bsm.energy<=minUpperEnergy(n3)){
+                            pq.remove(n3);
+                            pq.add(n3);
+                        }
+                        else if(!pq.contains(n3)) pq.add(n3);
                     }
-                    else pq.add(n2);
-                }
-                else{
-                    Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
-                    Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    if(pq.contains(n1)){
-                        pq.remove(n1);
-                        pq.add(n1);
-                    }
-                    else pq.add(n1);
-                    if(pq.contains(n2)){
-                        pq.remove(n2);
-                        pq.add(n2);
-                    }
-                    else pq.add(n2);
-                    if(pq.contains(n3)){
-                        pq.remove(n3);
-                        pq.add(n3);
-                    }
-                    else pq.add(n3);
                 }
             }
+
         }
+
         Node minNode=path.delMin();
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
@@ -141,25 +146,50 @@ public class SeamCarver {
         return shortpath;
     }
 
+    private double minUpperEnergy(Node n){
+        if(n.colnum==0){
+            double energy1=energy(0, n.rownum-1);
+            double energy2=energy(1, n.rownum-1);
+            if(energy1>energy2) return energy2;
+            else return energy1;
+        }
+        else if(n.colnum==picture.width()-1){
+            double energy1=energy(picture.width()-1, n.rownum-1);
+            double energy2=energy(picture.width()-2, n.rownum-1);
+            if(energy1>energy2) return energy2;
+            else return energy1;
+        }
+        else{
+            double energy1=energy(n.colnum, n.rownum-1);
+            double energy2=energy(n.colnum+1, n.rownum-1);
+            double energy3=energy(n.colnum-1, n.rownum-1);
+            if(energy1>energy2&&energy3>energy2) return energy2;
+            else if(energy3>energy1&&energy2>energy1) return energy1;
+            else return energy3;
+        }
+    }
+
     private class Node implements Comparable<Node>{
         public int colnum;
         public int rownum;
         public double previous;
         public Node preNode;
         public double energy;
+        public double goalenergy;
 
-        public Node(double energy,int colnum,int rownum,double previous,Node pre){
+        public Node(double energy,int colnum,int rownum,double previous,Node pre,double goalenergy){
             this.colnum=colnum;
             this.rownum=rownum;
             this.previous=previous+energy;
             this.preNode=pre;
             this.energy=energy;
+            this.goalenergy=goalenergy;
         }
 
         @Override
-        public int compareTo(Node n){
-            if(n.previous/n.rownum>previous/rownum) return -1;
-            else if(n.previous/n.rownum<previous/rownum) return 1;
+        public int compareTo(Node n){        
+            if(n.previous+(picture.height()-1-n.rownum)*goalenergy>previous+(picture.height()-1-rownum)*goalenergy) return -1;
+            else if(n.previous+(picture.height()-1-n.rownum)*goalenergy<previous+(picture.height()-1-rownum)*goalenergy) return 1;
             else return 0;
         }
 
