@@ -12,10 +12,11 @@ public class test {
     private final int height=6;
     private final int width=4;
     public double[][] energies=new double[height][width];
-    public double minEnergy=0;
-    public double maxEnergy=0;
-    public double mediumenergy=0;
+    public double minEnergy=0;//
+    public double maxEnergy=0;//
+    public double mediumenergy=0;//
     public double[][] previouss=new double[height][width];
+    public int count;
 
     public test(String filename){
         File f=new File(filename);
@@ -70,32 +71,24 @@ public class test {
     public int[] findVerticalSeam(){
         int[] shortpath=new int[height];
         PriorityQueue<Node> path=new PriorityQueue<>();
-        /*for(int i=0;i<height;++i){
-            for(int j=0;j<width;++j){
-                previouss[i][j]=minEnergy;
-            }
-        }*/
+        PriorityQueue<Node> pq=new PriorityQueue<>();
         for(int i=0;i<width;++i){
             Node row=new Node(energy(i, 0), i, 0, 0, null);
-            PriorityQueue<Node> pq=new PriorityQueue<>();
-            Set<Node> set=new HashSet<>();
             pq.add(row);
+        }
+        //for(int i=0;i<width;++i){
+            //Node row=new Node(energy(i, 0), i, 0, 0, null);
+            Set<Node> set=new HashSet<>();
+            //pq.add(row);
             while(!pq.isEmpty()){
                 Node bsm=pq.remove();
-                if(i==3) System.out.println(bsm.rownum+"   "+bsm.colnum+"  "+bsm.previous);
                 previouss[bsm.rownum][bsm.colnum]=bsm.previous;
                 if(set.contains(bsm)) continue;
                 else if(!set.contains(bsm)&&bsm.rownum!=height-1) set.add(bsm);
+                ++count;
                 if(bsm.rownum==height-1){
-                    /*if(i==3){
-                        Node n=bsm;
-                        while(n.preNode!=null){
-                            System.out.println(n.rownum+"  "+n.colnum+"  "+n.previous);
-                            n=n.preNode;
-                        }
-                    }*/
                     path.add(bsm);
-                    break;
+                    //break;
                 }
                 else if(bsm.colnum==0){
                     Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
@@ -117,8 +110,10 @@ public class test {
                     checkAndAdd(pq, n2, bsm,set);
                     checkAndAdd(pq, n3, bsm,set);
                 }
-            }        
-        }
+            }
+            System.out.println(count);
+            count=0;        
+        //}
         Node minNode=path.remove();
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
@@ -222,7 +217,7 @@ public class test {
     }
 
     private double h(Node n){
-        return 0;
+        return (height-1-n.rownum)*minEnergy;
     }
 
     public static void main(String[] args) {
@@ -233,6 +228,7 @@ public class test {
             //System.out.println(seam[i]+"   "+t.energy(seam[i], i));
             sumseam+=t.energy(seam[i], i);
         }
+        //System.out.println(t.count);
         System.out.println(sumseam);
     }
 }

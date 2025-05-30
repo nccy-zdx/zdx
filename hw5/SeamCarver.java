@@ -72,48 +72,58 @@ public class SeamCarver {
     public int[] findVerticalSeam(){
         int[] shortpath=new int[picture.height()];
         MinPQ<Node> path=new MinPQ<>();
+        PriorityQueue<Node> pq=new PriorityQueue<>();
+        int count=0;
         for(int i=0;i<picture.width();++i){
             Node row=new Node(energy(i, 0), i, 0, 0, null);
-            PriorityQueue<Node> pq=new PriorityQueue<>();
-            Set<Node> set=new HashSet<>();
             pq.add(row);
-            while(!pq.isEmpty()){
-                Node bsm=pq.remove();
-                previouss[bsm.rownum][bsm.colnum]=bsm.previous;
-                if(set.contains(bsm)) continue;
-                else set.add(bsm);
-                if(bsm.rownum==picture.height()-1){
-                    path.insert(bsm);
-                    break;
-                }
-                else if(bsm.colnum==0){
-                    Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(n1, pq, bsm,set);
-                    checkAndAdd(n2, pq, bsm,set);
-                }
-                else if(bsm.colnum==picture.width()-1){
-                    Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
-                    Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(n1, pq, bsm,set);
-                    checkAndAdd(n2, pq, bsm,set);
-                }
-                else{
-                    Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
-                    Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);                        Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(n1, pq, bsm,set);
-                    checkAndAdd(n2, pq, bsm,set);
-                    checkAndAdd(n3, pq, bsm,set);
-                }
+        }//W
+        Set<Node> set=new HashSet<>();
+        while(!pq.isEmpty()){
+            Node bsm=pq.remove();
+            previouss[bsm.rownum][bsm.colnum]=bsm.previous;
+            if(set.contains(bsm)) continue;
+            else if(!set.contains(bsm)&&bsm.rownum!=picture.height()-1) set.add(bsm);
+            ++count;
+            if(bsm.rownum==picture.height()-1){
+                path.insert(bsm);
+                break;
             }
-        }
+            else if(bsm.colnum==0){
+                Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
+                Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
+                checkAndAdd(n1, pq, bsm, set);
+                checkAndAdd(n2, pq, bsm, set);
+            }
+            else if(bsm.colnum==picture.width()-1){
+                Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
+                Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
+                checkAndAdd(n1, pq, bsm, set);
+                checkAndAdd(n2, pq, bsm, set);
+            }
+            else{
+                Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
+                Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
+                Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
+                checkAndAdd(n1, pq, bsm, set);
+                checkAndAdd(n2, pq, bsm, set);
+                checkAndAdd(n3, pq, bsm, set);
+            }
+        }//W*H
+        System.out.println(count);
+
         Node minNode=path.delMin();
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
             minNode=minNode.preNode;
-        }
+        }//H
+
         shortpath[0]=minNode.colnum;
         return shortpath;
+    }
+
+    private double h(Node n){
+        return 0;
     }
 
     private void checkAndAdd(Node n,PriorityQueue<Node> pq,Node bsm,Set<Node> set){
@@ -149,7 +159,7 @@ public class SeamCarver {
             double energy1=previouss[n.rownum-1][n.colnum];
             double energy2=previouss[n.rownum-1][n.colnum+1];
             double energy3=previouss[n.rownum-1][n.colnum-1];
-            
+
             if(energy1==0&&energy2==0) return energy3;
             else if(energy1==0&&energy3==0) return energy2;
             else if(energy2==0&&energy3==0) return energy1;
@@ -188,8 +198,8 @@ public class SeamCarver {
 
         @Override
         public int compareTo(Node n){        
-            if(n.previous>previous) return -1;
-            else if(n.previous<previous) return 1;
+            if(n.previous+h(n)>previous+h(this)) return -1;
+            else if(n.previous+h(n)<previous+h(this)) return 1;
             else return 0;
         }
 

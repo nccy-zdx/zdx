@@ -35,12 +35,12 @@ public class SanityCheckTest {
 
     @Test
     public void sanityVerticalSeamTest() {
-        Picture p = new Picture("images/12x10.png");
+        Picture p = new Picture("images/10x10.png");
         SeamCarver sc = new SeamCarver(p);
 
         int[] seam = sc.findVerticalSeam();
         int[] expected = {0,0,0,0,0,0,0,0,0,0};
-        int sumseam=0;
+        double sumseam=0;
         for(int i=0;i<seam.length;++i){
             System.out.println(seam[i]);
             sumseam+=sc.energy(seam[i], i);
