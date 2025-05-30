@@ -73,7 +73,7 @@ public class SeamCarver {
         int[] shortpath=new int[picture.height()];
         MinPQ<Node> path=new MinPQ<>();
         PriorityQueue<Node> pq=new PriorityQueue<>();
-        int count=0;
+        //int count=0;
         for(int i=0;i<picture.width();++i){
             Node row=new Node(energy(i, 0), i, 0, 0, null);
             pq.add(row);
@@ -84,7 +84,7 @@ public class SeamCarver {
             previouss[bsm.rownum][bsm.colnum]=bsm.previous;
             if(set.contains(bsm)) continue;
             else if(!set.contains(bsm)&&bsm.rownum!=picture.height()-1) set.add(bsm);
-            ++count;
+            //++count;
             if(bsm.rownum==picture.height()-1){
                 path.insert(bsm);
                 break;
@@ -110,7 +110,7 @@ public class SeamCarver {
                 checkAndAdd(n3, pq, bsm, set);
             }
         }//W*H
-        System.out.println(count);
+        //System.out.println(count);
 
         Node minNode=path.delMin();
         while(minNode.rownum!=0){
