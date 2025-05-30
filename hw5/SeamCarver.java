@@ -89,21 +89,21 @@ public class SeamCarver {
                 else if(bsm.colnum==0){
                     Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
                     Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(n1, pq, bsm);
-                    checkAndAdd(n2, pq, bsm);
+                    checkAndAdd(n1, pq, bsm,set);
+                    checkAndAdd(n2, pq, bsm,set);
                 }
                 else if(bsm.colnum==picture.width()-1){
                     Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
                     Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(n1, pq, bsm);
-                    checkAndAdd(n2, pq, bsm);
+                    checkAndAdd(n1, pq, bsm,set);
+                    checkAndAdd(n2, pq, bsm,set);
                 }
                 else{
                     Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
                     Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);                        Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(n1, pq, bsm);
-                    checkAndAdd(n2, pq, bsm);
-                    checkAndAdd(n3, pq, bsm);
+                    checkAndAdd(n1, pq, bsm,set);
+                    checkAndAdd(n2, pq, bsm,set);
+                    checkAndAdd(n3, pq, bsm,set);
                 }
             }
         }
@@ -116,13 +116,13 @@ public class SeamCarver {
         return shortpath;
     }
 
-    private void checkAndAdd(Node n,PriorityQueue<Node> pq,Node bsm){
+    private void checkAndAdd(Node n,PriorityQueue<Node> pq,Node bsm,Set<Node> set){
         if(pq.contains(n)&&bsm.previous<minUpperPrevious(n)){
             pq.remove(n);
             pq.add(n);
             previouss[n.rownum][n.colnum]=n.previous;
         }
-        else if(!pq.contains(n)){
+        else if(!pq.contains(n)&&!set.contains(n)){
             pq.add(n);
             previouss[n.rownum][n.colnum]=n.previous;
         }
@@ -132,19 +132,41 @@ public class SeamCarver {
         if(n.colnum==0){
             double energy1=previouss[n.rownum-1][0];
             double energy2=previouss[n.rownum-1][1];
+            if(energy1==0) return energy2;
+            else if(energy2==0) return energy1;
             if(energy1>energy2) return energy2;
             else return energy1;
         }
         else if(n.colnum==picture.width()-1){
             double energy1=previouss[n.rownum-1][picture.width()-1];
             double energy2=previouss[n.rownum-1][picture.width()-2];
+            if(energy1==0) return energy2;
+            else if(energy2==0) return energy1;
             if(energy1>energy2) return energy2;
             else return energy1;
         }
         else{
             double energy1=previouss[n.rownum-1][n.colnum];
             double energy2=previouss[n.rownum-1][n.colnum+1];
-            double energy3=previouss[n.rownum-1][n.colnum-1];;
+            double energy3=previouss[n.rownum-1][n.colnum-1];
+            
+            if(energy1==0&&energy2==0) return energy3;
+            else if(energy1==0&&energy3==0) return energy2;
+            else if(energy2==0&&energy3==0) return energy1;
+            
+            if(energy1==0){
+                if(energy3>energy2) return energy2;
+                else return energy3;
+            }
+            else if(energy2==0){
+                if(energy1>energy3) return energy3;
+                else return energy1;
+            }
+            else if(energy3==0){
+                if(energy1>energy2) return energy2;
+                else return energy1;
+            }
+
             if(energy1>energy2&&energy3>energy2) return energy2;
             else if(energy3>energy1&&energy2>energy1) return energy1;
             else return energy3;
@@ -185,6 +207,7 @@ public class SeamCarver {
         public int hashCode() {
             return colnum<<31+rownum;
         }
+        
     }
 
     public void removeHorizontalSeam(int[] seam){

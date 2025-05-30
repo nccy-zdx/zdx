@@ -9,8 +9,8 @@ import java.util.Set;
 import edu.princeton.cs.algs4.MinPQ;
 
 public class test {
-    private final int height=10;
-    private final int width=7;
+    private final int height=6;
+    private final int width=4;
     public double[][] energies=new double[height][width];
     public double minEnergy=0;
     public double maxEnergy=0;
@@ -70,11 +70,11 @@ public class test {
     public int[] findVerticalSeam(){
         int[] shortpath=new int[height];
         PriorityQueue<Node> path=new PriorityQueue<>();
-        for(int i=0;i<height;++i){
+        /*for(int i=0;i<height;++i){
             for(int j=0;j<width;++j){
                 previouss[i][j]=minEnergy;
             }
-        }
+        }*/
         for(int i=0;i<width;++i){
             Node row=new Node(energy(i, 0), i, 0, 0, null);
             PriorityQueue<Node> pq=new PriorityQueue<>();
@@ -82,32 +82,40 @@ public class test {
             pq.add(row);
             while(!pq.isEmpty()){
                 Node bsm=pq.remove();
+                if(i==3) System.out.println(bsm.rownum+"   "+bsm.colnum+"  "+bsm.previous);
                 previouss[bsm.rownum][bsm.colnum]=bsm.previous;
                 if(set.contains(bsm)) continue;
                 else if(!set.contains(bsm)&&bsm.rownum!=height-1) set.add(bsm);
                 if(bsm.rownum==height-1){
+                    /*if(i==3){
+                        Node n=bsm;
+                        while(n.preNode!=null){
+                            System.out.println(n.rownum+"  "+n.colnum+"  "+n.previous);
+                            n=n.preNode;
+                        }
+                    }*/
                     path.add(bsm);
                     break;
                 }
                 else if(bsm.colnum==0){
                     Node n1=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
                     Node n2=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(pq, n1, bsm);
-                    checkAndAdd(pq, n2, bsm);
+                    checkAndAdd(pq, n1, bsm,set);
+                    checkAndAdd(pq, n2, bsm,set);
                 }
                 else if(bsm.colnum==width-1){
                     Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
                     Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(pq, n1, bsm);
-                    checkAndAdd(pq, n2, bsm);
+                    checkAndAdd(pq, n1, bsm,set);
+                    checkAndAdd(pq, n2, bsm,set);
                 }
                 else{
                     Node n1=new Node(energy(bsm.colnum-1, bsm.rownum+1), bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
                     Node n2=new Node(energy(bsm.colnum, bsm.rownum+1), bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
                     Node n3=new Node(energy(bsm.colnum+1, bsm.rownum+1), bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                    checkAndAdd(pq, n1, bsm);
-                    checkAndAdd(pq, n2, bsm);
-                    checkAndAdd(pq, n3, bsm);
+                    checkAndAdd(pq, n1, bsm,set);
+                    checkAndAdd(pq, n2, bsm,set);
+                    checkAndAdd(pq, n3, bsm,set);
                 }
             }        
         }
@@ -120,13 +128,13 @@ public class test {
         return shortpath;
     }
 
-    private void checkAndAdd(PriorityQueue<Node> pq,Node n,Node bsm){
+    private void checkAndAdd(PriorityQueue<Node> pq,Node n,Node bsm,Set<Node> set){ 
         if(pq.contains(n)&&bsm.previous<minUpperPrevious(n)){
             pq.remove(n);
             pq.add(n);
             previouss[n.rownum][n.colnum]=n.previous;
         }
-        else if(!pq.contains(n)){
+        else if(!pq.contains(n)&&!set.contains(n)){
             pq.add(n);
             previouss[n.rownum][n.colnum]=n.previous;
         }
@@ -136,12 +144,16 @@ public class test {
         if(n.colnum==0){
             double energy1=previouss[n.rownum-1][0];
             double energy2=previouss[n.rownum-1][1];
+            if(energy1==0) return energy2;
+            else if(energy2==0) return energy1;
             if(energy1>energy2) return energy2;
             else return energy1;
         }
         else if(n.colnum==width-1){
             double energy1=previouss[n.rownum-1][width-1];
             double energy2=previouss[n.rownum-1][width-2];
+            if(energy1==0) return energy2;
+            else if(energy2==0) return energy1;
             if(energy1>energy2) return energy2;
             else return energy1;
         }
@@ -149,6 +161,24 @@ public class test {
             double energy1=previouss[n.rownum-1][n.colnum];
             double energy2=previouss[n.rownum-1][n.colnum+1];
             double energy3=previouss[n.rownum-1][n.colnum-1];
+            
+            if(energy1==0&&energy2==0) return energy3;
+            else if(energy1==0&&energy3==0) return energy2;
+            else if(energy2==0&&energy3==0) return energy1;
+            
+            if(energy1==0){
+                if(energy3>energy2) return energy2;
+                else return energy3;
+            }
+            else if(energy2==0){
+                if(energy1>energy3) return energy3;
+                else return energy1;
+            }
+            else if(energy3==0){
+                if(energy1>energy2) return energy2;
+                else return energy1;
+            }
+
             if(energy1>energy2&&energy3>energy2) return energy2;
             else if(energy3>energy1&&energy2>energy1) return energy1;
             else return energy3;
@@ -196,7 +226,7 @@ public class test {
     }
 
     public static void main(String[] args) {
-        test t=new test("test.txt");
+        test t=new test("test1.txt");
         int[] seam=t.findVerticalSeam();
         double sumseam=0;
         for(int i=0;i<seam.length;++i){
