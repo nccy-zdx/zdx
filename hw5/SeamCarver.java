@@ -111,6 +111,9 @@ public class SeamCarver {
         Set<Node> set=new HashSet<>();
         PriorityQueue<Node> pq=new PriorityQueue<>();
         double[][] previouss;
+        if(picture.width()==1){
+            return shortpath;
+        }
         if(isHorizonal){
             setEnergies(seam);
             previouss=new double[transPicture.height()][transPicture.width()];
