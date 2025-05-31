@@ -111,6 +111,7 @@ public class test {
                     checkAndAdd(pq, n3, bsm,set);
                 }
             }
+            System.out.println(pq.size());
             System.out.println(count);
             count=0;        
         //}
@@ -202,17 +203,13 @@ public class test {
 
         @Override
         public boolean equals(Object obj) {
-            if(obj==null) return false;
-            if(obj==this) return true;
-            if(obj.getClass()!=this.getClass()) return false;
-            Node n=((Node)obj);
-            if(n.rownum==rownum&&n.colnum==colnum) return true;
+            if(obj.hashCode()==this.hashCode()) return true;
             else return false;
         }
 
         @Override
         public int hashCode() {
-            return colnum<<31+rownum;
+            return (rownum+53)*53+colnum;
         }
     }
 

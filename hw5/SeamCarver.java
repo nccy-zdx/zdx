@@ -111,9 +111,7 @@ public class SeamCarver {
         Set<Node> set=new HashSet<>();
         PriorityQueue<Node> pq=new PriorityQueue<>();
         double[][] previouss;
-        if(picture.width()==1){
-            return shortpath;
-        }
+        if(picture.width()==1) return shortpath;
         if(isHorizonal){
             setEnergies(seam);
             previouss=new double[transPicture.height()][transPicture.width()];
@@ -127,10 +125,12 @@ public class SeamCarver {
             pq.add(row);
         }//W
 
+        int count=0;
         while(!pq.isEmpty()){
             Node bsm=pq.remove();
             previouss[bsm.rownum][bsm.colnum]=bsm.previous;
             if(!set.contains(bsm)) set.add(bsm);
+            ++count;
             if(bsm.rownum==picture.height()-1){
                 minNode=bsm;
                 break;
@@ -156,6 +156,9 @@ public class SeamCarver {
                 checkAndAdd(n3, pq, bsm, set, previouss);
             }
         }//W*H
+        System.out.println(pq.size());
+        System.out.println(count);
+        System.out.println();
 
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
@@ -245,11 +248,10 @@ public class SeamCarver {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            Node n=((Node)obj);
-            if(n.rownum==rownum&&n.colnum==colnum) return true;
+        public boolean equals(Object obj) { 
+            if(obj.hashCode()==this.hashCode()) return true;
             else return false;
-        }
+        }//?
 
         @Override
         public int hashCode() {
