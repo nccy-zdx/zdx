@@ -9,16 +9,12 @@ public class SeamCarver {
     private Picture picture;
     private double[][] energies;
     private Picture transPicture;
-    private boolean isHorizonal=false;
     private int[] seam;
     private double minEnergy;
-    private double maxEnergy;
-    private double lengthOfPath;
 
     public SeamCarver(Picture picture){
         this.picture=new Picture(picture);
         minEnergy=energy(0, 0);
-        maxEnergy=energy(0, 0);
     }
 
     private void settrans(){
@@ -30,7 +26,7 @@ public class SeamCarver {
         }
     }
 
-    private void setEnergies(int[] seam,double[][] previouss){
+    private void setEnergiesPreviousPq(int[] seam,double[][] previouss,PriorityQueue<Node> pq){
         if(seam==null){
             energies=new double[picture.height()][picture.width()];
             for(int i=0;i<picture.width();++i){
@@ -38,8 +34,11 @@ public class SeamCarver {
                     energies[j][i]=energy(i, j);
                     previouss[j][i]=-1;
                     if(minEnergy>energies[j][i]) minEnergy=energies[j][i];
-                    if(maxEnergy<energies[j][i]) maxEnergy=energies[j][i];
                 }
+            }
+            for(int i=0;i<picture.width();++i){
+                Node row=new Node(i, 0, 0, null);
+                pq.add(row);
             }
         }
         else{
@@ -56,13 +55,16 @@ public class SeamCarver {
                     energies[i][seam[i]-1]=energy(seam[i]-1, i);
                     energies[i][seam[i]]=energy(seam[i], i);
                 }
-                for(int j=0;j<seam[i]+1;++j){
-                    previouss[i][j]=-1;
-                }
                 for(int j=seam[i]+1;j<picture.width();++j){
                     energies[i][j]=energies[i][j+1];
+                }
+               for(int j=0;j<picture.width();++j){
                     previouss[i][j]=-1;
                 }
+            }
+            for(int i=0;i<picture.width();++i){
+                Node row=new Node(i, 0, 0, null);
+                pq.add(row);
             }
         }
     }
@@ -105,41 +107,27 @@ public class SeamCarver {
 
     public int[] findHorizontalSeam(){
         Picture reservepic=new Picture(picture);
-        isHorizonal=true;
         settrans();
         picture=transPicture;
         int[] shortpath=findVerticalSeam();
         picture=reservepic;
-        isHorizonal=false;
         return shortpath;
     }
 
     public int[] findVerticalSeam(){
         Node minNode=null;
         int[] shortpath=new int[picture.height()];
-        Set<Node> set=new HashSet<>();
         PriorityQueue<Node> pq=new PriorityQueue<>();
+        int[][] record=new int[picture.height()][picture.width()];
         double[][] previouss;
         if(picture.width()==1) return shortpath;
-        if(isHorizonal){
-            previouss=new double[transPicture.height()][transPicture.width()];
-            setEnergies(seam,previouss);
-        }
-        else{
-            previouss=new double[picture.height()][picture.width()];
-            setEnergies(seam,previouss);
-        }
-        for(int i=0;i<picture.width();++i){
-            Node row=new Node(i, 0, 0, null);
-            pq.add(row);
-        }//W
+        previouss=new double[picture.height()][picture.width()];
+        setEnergiesPreviousPq(seam,previouss,pq);
 
-        int count=0;
         while(!pq.isEmpty()){
             Node bsm=pq.remove();
             previouss[bsm.rownum][bsm.colnum]=bsm.previous;
-            if(!set.contains(bsm)) set.add(bsm);
-            ++count;
+            if(record[bsm.rownum][bsm.colnum]==0) record[bsm.rownum][bsm.colnum]=1;;
             if(bsm.rownum==picture.height()-1){
                 minNode=bsm;
                 break;
@@ -147,28 +135,24 @@ public class SeamCarver {
             else if(bsm.colnum==0){
                 Node n1=new Node(bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
                 Node n2=new Node(bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                checkAndAdd(n1, pq, bsm, set, previouss);
-                checkAndAdd(n2, pq, bsm, set, previouss);
+                checkAndAdd(n1, pq, bsm, record, previouss);
+                checkAndAdd(n2, pq, bsm, record, previouss);
             }
             else if(bsm.colnum==picture.width()-1){
                 Node n1=new Node(bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
                 Node n2=new Node(bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
-                checkAndAdd(n1, pq, bsm, set, previouss);
-                checkAndAdd(n2, pq, bsm, set, previouss);
+                checkAndAdd(n1, pq, bsm, record, previouss);
+                checkAndAdd(n2, pq, bsm, record, previouss);
             }
             else{
                 Node n1=new Node(bsm.colnum-1, bsm.rownum+1,bsm.previous,bsm);
                 Node n2=new Node(bsm.colnum, bsm.rownum+1,bsm.previous,bsm);
                 Node n3=new Node(bsm.colnum+1, bsm.rownum+1,bsm.previous,bsm);
-                checkAndAdd(n1, pq, bsm, set, previouss);
-                checkAndAdd(n2, pq, bsm, set, previouss);
-                checkAndAdd(n3, pq, bsm, set, previouss);
+                checkAndAdd(n1, pq, bsm, record, previouss);
+                checkAndAdd(n2, pq, bsm, record, previouss);
+                checkAndAdd(n3, pq, bsm, record, previouss);
             }
         }//W*H
-        lengthOfPath=minNode.previous;
-        System.out.println(pq.size()+"    ");
-        System.out.println(count+"   ");
-        System.out.println();
 
         while(minNode.rownum!=0){
             shortpath[minNode.rownum]=minNode.colnum;
@@ -179,8 +163,8 @@ public class SeamCarver {
         return shortpath;
     }
 
-    private void checkAndAdd(Node n,PriorityQueue<Node> pq,Node bsm,Set<Node> set,double[][] previouss){
-        if(set.contains(n)) return;
+    private void checkAndAdd(Node n,PriorityQueue<Node> pq,Node bsm,int[][] record,double[][] previouss){
+        if(record[n.rownum][n.colnum]==1) return;
         if(previouss[n.rownum][n.colnum]!=-1&&bsm.previous<minUpperPrevious(n,previouss)){
             pq.remove(n);
             pq.add(n);
