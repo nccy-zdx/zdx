@@ -12,10 +12,13 @@ public class SeamCarver {
     private boolean isHorizonal=false;
     private int[] seam;
     private double minEnergy;
+    private double maxEnergy;
+    private double lengthOfPath;
 
     public SeamCarver(Picture picture){
         this.picture=new Picture(picture);
         minEnergy=energy(0, 0);
+        maxEnergy=energy(0, 0);
     }
 
     private void settrans(){
@@ -27,13 +30,15 @@ public class SeamCarver {
         }
     }
 
-    private void setEnergies(int[] seam){
+    private void setEnergies(int[] seam,double[][] previouss){
         if(seam==null){
             energies=new double[picture.height()][picture.width()];
             for(int i=0;i<picture.width();++i){
                 for(int j=0;j<picture.height();++j){
                     energies[j][i]=energy(i, j);
+                    previouss[j][i]=-1;
                     if(minEnergy>energies[j][i]) minEnergy=energies[j][i];
+                    if(maxEnergy<energies[j][i]) maxEnergy=energies[j][i];
                 }
             }
         }
@@ -51,8 +56,12 @@ public class SeamCarver {
                     energies[i][seam[i]-1]=energy(seam[i]-1, i);
                     energies[i][seam[i]]=energy(seam[i], i);
                 }
+                for(int j=0;j<seam[i]+1;++j){
+                    previouss[i][j]=-1;
+                }
                 for(int j=seam[i]+1;j<picture.width();++j){
                     energies[i][j]=energies[i][j+1];
+                    previouss[i][j]=-1;
                 }
             }
         }
@@ -113,12 +122,12 @@ public class SeamCarver {
         double[][] previouss;
         if(picture.width()==1) return shortpath;
         if(isHorizonal){
-            setEnergies(seam);
             previouss=new double[transPicture.height()][transPicture.width()];
+            setEnergies(seam,previouss);
         }
         else{
-            setEnergies(seam);
             previouss=new double[picture.height()][picture.width()];
+            setEnergies(seam,previouss);
         }
         for(int i=0;i<picture.width();++i){
             Node row=new Node(i, 0, 0, null);
@@ -156,8 +165,9 @@ public class SeamCarver {
                 checkAndAdd(n3, pq, bsm, set, previouss);
             }
         }//W*H
-        System.out.println(pq.size());
-        System.out.println(count);
+        lengthOfPath=minNode.previous;
+        System.out.println(pq.size()+"    ");
+        System.out.println(count+"   ");
         System.out.println();
 
         while(minNode.rownum!=0){
@@ -171,12 +181,12 @@ public class SeamCarver {
 
     private void checkAndAdd(Node n,PriorityQueue<Node> pq,Node bsm,Set<Node> set,double[][] previouss){
         if(set.contains(n)) return;
-        if(pq.contains(n)&&bsm.previous<minUpperPrevious(n,previouss)){
+        if(previouss[n.rownum][n.colnum]!=-1&&bsm.previous<minUpperPrevious(n,previouss)){
             pq.remove(n);
             pq.add(n);
             previouss[n.rownum][n.colnum]=n.previous;
         }
-        else if(!pq.contains(n)){
+        else if(previouss[n.rownum][n.colnum]==-1){
             pq.add(n);
             previouss[n.rownum][n.colnum]=n.previous;
         }
@@ -186,16 +196,16 @@ public class SeamCarver {
         if(n.colnum==0){
             double energy1=previouss[n.rownum-1][0];
             double energy2=previouss[n.rownum-1][1];
-            if(energy1==0) return energy2;
-            else if(energy2==0) return energy1;
+            if(energy1==-1) return energy2;
+            else if(energy2==-1) return energy1;
             if(energy1>energy2) return energy2;
             else return energy1;
         }
         else if(n.colnum==picture.width()-1){
             double energy1=previouss[n.rownum-1][picture.width()-1];
             double energy2=previouss[n.rownum-1][picture.width()-2];
-            if(energy1==0) return energy2;
-            else if(energy2==0) return energy1;
+            if(energy1==-1) return energy2;
+            else if(energy2==-1) return energy1;
             if(energy1>energy2) return energy2;
             else return energy1;
         }
@@ -204,19 +214,19 @@ public class SeamCarver {
             double energy2=previouss[n.rownum-1][n.colnum+1];
             double energy3=previouss[n.rownum-1][n.colnum-1];
 
-            if(energy1==0&&energy2==0) return energy3;
-            else if(energy1==0&&energy3==0) return energy2;
-            else if(energy2==0&&energy3==0) return energy1;
+            if(energy1==-1&&energy2==-1) return energy3;
+            else if(energy1==-1&&energy3==-1) return energy2;
+            else if(energy2==-1&&energy3==-1) return energy1;
             
-            if(energy1==0){
+            if(energy1==-1){
                 if(energy3>energy2) return energy2;
                 else return energy3;
             }
-            else if(energy2==0){
+            else if(energy2==-1){
                 if(energy1>energy3) return energy3;
                 else return energy1;
             }
-            else if(energy3==0){
+            else if(energy3==-1){
                 if(energy1>energy2) return energy2;
                 else return energy1;
             }
@@ -255,7 +265,7 @@ public class SeamCarver {
 
         @Override
         public int hashCode() {
-            return (rownum+53)*53+colnum;
+            return (rownum+10007)*10007+colnum;
         }//哈希啊哈希，你让我好找又好想啊。
         
     }
