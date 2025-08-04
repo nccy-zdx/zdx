@@ -43,7 +43,7 @@
             "name": "SeamCarverVisualizer",
             "request": "launch",
             "mainClass": "SeamCarverVisualizer",
-            "args": "images/HJoceanSmall.png 50 y",
+            "args": "images/_20250601132119.png 700 x",
             "projectName": "hw5_7fd7bbf8"
         },
         {

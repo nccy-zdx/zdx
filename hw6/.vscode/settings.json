@@ -1,0 +1,5 @@
+{
+    "java.project.referencedLibraries": [
+        "E:/cs61b_da_java/zdx/library-sp18/javalib/**/*.jar"
+    ]
+}
