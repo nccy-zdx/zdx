@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -17,14 +16,10 @@ public class Boggle {
     private static HashSet<String> hs;
 
     private static class Node implements Comparable<Node>{
-        public char letter;
         public int[][] premap;
         public String preStr;
-        public Node preNode;
 
         public Node(char letter,Node preNode,String preString,int[][] premap,int i,int j){
-            this.letter=letter;
-            this.preNode=preNode;
             preStr=preString;
             preStr+=letter;
             this.premap=new int[premap.length][premap[1].length];
