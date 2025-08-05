@@ -94,7 +94,6 @@ public class Boggle {
         }
         MaxPQ<Node> pq=new MaxPQ<>();
         maxpq=pq;
-        System.out.println(list);
 
         return list;
     }
@@ -217,14 +216,6 @@ public class Boggle {
                 if(n.premap[i][j-1]!=1) help(i, j-1, n);
                 if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            Boggle.solve(7, "exampleBoard.txt");
-        } catch (IllegalArgumentException e){
-            System.out.println(111);
         }
     }
 
