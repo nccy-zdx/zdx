@@ -12,6 +12,7 @@ public class Trie {
             s.push(root);
 
             for(int i=0;i<line.length();++i){
+                
                 if(line.charAt(i)==33541){
                         Node n1=s.pop();
                         if(n1.links[128]==null){
@@ -39,6 +40,7 @@ public class Trie {
                         s.push(n1.links[130]);
                         continue;
                 }
+                
 
                 Node n1=s.pop();
                 if(n1.links[line.charAt(i)]==null){
@@ -54,7 +56,7 @@ public class Trie {
         br.close();
     }
 
-    private static final int R=132;
+    private static final int R=256;
 
     class Node{
         boolean exists;
@@ -77,7 +79,6 @@ public class Trie {
         if(d==key.length()) return x.exists;
 
         char ch=key.charAt(d);
-
         if(ch==33541) return contains(x.links[128], key, d+1);
         else if(ch==29483) return contains(x.links[129], key, d+1);
         else if(ch==38170) return contains(x.links[130], key, d+1);
@@ -94,7 +95,6 @@ public class Trie {
         if(d==key.length()) return true;
 
         char ch=key.charAt(d);
-        if(ch==233||ch==232) System.out.println(ch);
         if(ch==33541) return isLevelContains(x.links[128], key, d+1);
         else if(ch==29483) return isLevelContains(x.links[129], key, d+1);
         else if(ch==38170) return isLevelContains(x.links[130], key, d+1);
