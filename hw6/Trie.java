@@ -39,15 +39,6 @@ public class Trie {
                         s.push(n1.links[130]);
                         continue;
                 }
-                else if(line.charAt(i)==233){
-                        Node n1=s.pop();
-                        if(n1.links[131]==null){
-                            Node n2=new Node();
-                            n1.links[131]=n2;
-                        }
-                        s.push(n1.links[131]);
-                        continue;
-                }
 
                 Node n1=s.pop();
                 if(n1.links[line.charAt(i)]==null){
@@ -90,7 +81,6 @@ public class Trie {
         if(ch==33541) return contains(x.links[128], key, d+1);
         else if(ch==29483) return contains(x.links[129], key, d+1);
         else if(ch==38170) return contains(x.links[130], key, d+1);
-        else if(ch==233) return contains(x.links[131],key,d+1);
         
         return contains(x.links[ch],key,d+1);
     }
@@ -104,10 +94,10 @@ public class Trie {
         if(d==key.length()) return true;
 
         char ch=key.charAt(d);
+        if(ch==233||ch==232) System.out.println(ch);
         if(ch==33541) return isLevelContains(x.links[128], key, d+1);
         else if(ch==29483) return isLevelContains(x.links[129], key, d+1);
         else if(ch==38170) return isLevelContains(x.links[130], key, d+1);
-        else if(ch==233) return isLevelContains(x.links[131],key,d+1);
 
         return isLevelContains(x.links[ch],key,d+1);
     }
