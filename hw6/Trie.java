@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.Stack;
 
 public class Trie {
 
@@ -8,14 +10,56 @@ public class Trie {
             BufferedReader br=new BufferedReader(new FileReader(path));
             String line;
             while((line=br.readLine())!=null){
-                put(line);
+                Stack<Node> s=new Stack<>();
+                s.push(root);
+
+                for(int i=0;i<line.length();++i){
+                    if(line.charAt(i)==33541){
+                        Node n1=s.pop();
+                        if(n1.links[128]==null){
+                            Node n2=new Node();
+                            n1.links[128]=n2;
+                        }
+                        s.push(n1.links[128]);
+                        continue;
+                    }
+                    else if(line.charAt(i)==29483){
+                        Node n1=s.pop();
+                        if(n1.links[129]==null){
+                            Node n2=new Node();
+                            n1.links[129]=n2;
+                        }
+                        s.push(n1.links[129]);
+                        continue;
+                    }
+                    else if(line.charAt(i)==38170){
+                        Node n1=s.pop();
+                        if(n1.links[130]==null){
+                            Node n2=new Node();
+                            n1.links[130]=n2;
+                        }
+                        s.push(n1.links[130]);
+                        continue;
+                    }
+
+                    Node n1=s.pop();
+                    if(n1.links[line.charAt(i)]==null){
+                        Node n2=new Node();
+                        n1.links[line.charAt(i)]=n2;
+                    }
+                    s.push(n1.links[line.charAt(i)]);
+                }
+
+                Node n=s.pop();
+                n.exists=true;
             }
             br.close();
         }
-        catch(Exception e){}
+        catch(IOException e){
+        }
     }
 
-    private static final int R=128;
+    private static final int R=131;
 
     class Node{
         boolean exists;
@@ -29,22 +73,6 @@ public class Trie {
 
     public Node root=new Node();
     
-    public void put(String key){
-        put(root, key, 0);
-    }
-
-    private Node put(Node x,String key,int d){
-        if(x==null) x=new Node();
-        if(d==key.length()){
-            x.exists=true;
-            return x;
-        }
-
-        char ch=key.charAt(d);
-        x.links[ch]=put(x.links[ch], key, d+1);
-        return x;
-    }
-
     public boolean contains(String key){
         return contains(root,key,0);
     }
@@ -54,11 +82,33 @@ public class Trie {
         if(d==key.length()) return x.exists;
 
         char ch=key.charAt(d);
+
+        if(ch==33541) return contains(x.links[128], key, d+1);
+        else if(ch==29483) return contains(x.links[129], key, d+1);
+        else if(ch==38170) return contains(x.links[130], key, d+1);
+        
         return contains(x.links[ch],key,d+1);
+    }
+
+    public boolean isLevelContains(String key){
+        return isLevelContains(root, key, 0);
+    }
+
+    private boolean isLevelContains(Node x,String key,int d){
+        if(x==null) return false;
+        if(d==key.length()) return true;
+
+        char ch=key.charAt(d);
+        if(ch==33541) return isLevelContains(x.links[128], key, d+1);
+        else if(ch==29483) return isLevelContains(x.links[129], key, d+1);
+        else if(ch==38170) return isLevelContains(x.links[130], key, d+1);
+        return isLevelContains(x.links[ch],key,d+1);
+
     }
 
     public static void main(String[] args) {
         Trie t=new Trie("words.txt");
-        System.out.println(t.contains("se"));
+        System.out.println(t.contains("set"));
     }
+
 }

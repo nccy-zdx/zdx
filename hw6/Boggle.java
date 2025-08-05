@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,8 +14,9 @@ public class Boggle {
     private static Trie trie=new Trie(dictPath);
     private static String[] strs;
     private static MaxPQ<Node> maxpq=new MaxPQ<>();
+    private static HashSet<String> hs;
 
-    private static class Node implements Comparator<Node>{
+    private static class Node implements Comparable<Node>{
         public char letter;
         public int[][] premap;
         public String preStr;
@@ -25,14 +27,29 @@ public class Boggle {
             this.preNode=preNode;
             preStr=preString;
             preStr+=letter;
-            this.premap=premap;
+            this.premap=new int[premap.length][premap[1].length];
+            for(int m=0;m<premap.length;++m){
+                for(int n=0;n<premap[0].length;++n){
+                    this.premap[m][n]=premap[m][n];
+                }
+            }
             this.premap[i][j]=1;
         }
 
         @Override
-        public int compare(Node n,Node x){
-            if(n.preStr.length()>x.preStr.length()) return 1;
-            else if(n.preStr.length()==x.preStr.length()) return 0;
+        public int compareTo(Node n){
+            if(n.preStr.length()<preStr.length()) return 1;
+            else if(n.preStr.length()==preStr.length()){
+                for(int i=0;i<preStr.length();++i){
+                    if(n.preStr.charAt(i)>preStr.charAt(i)){
+                        return 1;
+                    }
+                    else if(n.preStr.charAt(i)<preStr.charAt(i)){
+                        return -1;
+                    }
+                }
+                return 0;
+            }
             else return -1;
         }
 
@@ -57,6 +74,7 @@ public class Boggle {
         }
 
         List<String> list=new ArrayList<>();
+        hs=new HashSet<>();
         
         for(int i=0;i<strs.length;++i){
             for(int j=0;j<strs[i].length();++j){
@@ -71,12 +89,12 @@ public class Boggle {
         int count=0;
         while(it.hasNext()){
             list.add(it.next().preStr);
-            if(count>=k) break;
-            System.out.println(list.get(count)+"  "+count);
+            if(count>=k-1) break;
             ++count;
         }
         MaxPQ<Node> pq=new MaxPQ<>();
         maxpq=pq;
+        System.out.println(list);
 
         return list;
     }
@@ -88,40 +106,56 @@ public class Boggle {
 
     private static void search(int i,int j,Node n){
         if(i==0&&j==0){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i+1][j]!=1) help(i+1, j, n);
                 if(n.premap[i][j+1]!=1) help(i, j+1, n);
                 if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
             }
+            
         }
         else if(i==0&&j==strs[i].length()-1){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i+1][j]!=1) help(i+1, j, n);
                 if(n.premap[i][j-1]!=1) help(i, j-1, n);
                 if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
             }
         }
         else if(i==strs.length-1&&j==0){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i-1][j]!=1) help(i-1, j, n);
                 if(n.premap[i][j+1]!=1) help(i, j+1, n);
                 if(n.premap[i-1][j+1]!=1) help(i-1, j+1, n);
             }
         }
         else if(i==strs.length-1&&j==strs[i].length()-1){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i-1][j]!=1) help(i-1, j, n);
                 if(n.premap[i][j-1]!=1) help(i, j-1, n);
                 if(n.premap[i-1][j-1]!=1) help(i-1, j-1, n);
             }
         }
         else if(i==0){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i+1][j]!=1) help(i+1, j, n);
                 if(n.premap[i][j+1]!=1) help(i, j+1, n);
                 if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
@@ -130,8 +164,11 @@ public class Boggle {
             }
         }
         else if(j==0){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i+1][j]!=1) help(i+1, j, n);
                 if(n.premap[i][j+1]!=1) help(i, j+1, n);
                 if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
@@ -140,8 +177,11 @@ public class Boggle {
             }
         }
         else if(i==strs.length-1){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i-1][j]!=1) help(i-1, j, n);
                 if(n.premap[i][j+1]!=1) help(i, j+1, n);
                 if(n.premap[i-1][j+1]!=1) help(i-1, j+1, n);
@@ -150,8 +190,11 @@ public class Boggle {
             }
         }
         else if(j==strs[i].length()-1){
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i+1][j]!=1) help(i+1, j, n);
                 if(n.premap[i][j-1]!=1) help(i, j-1, n);
                 if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
@@ -160,8 +203,11 @@ public class Boggle {
             }
         }
         else{
-            if(trie.contains(n.preStr)){
-                if(n.preStr.length()>=3) maxpq.insert(n);
+            if(trie.isLevelContains(n.preStr)){
+                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                    maxpq.insert(n);
+                    hs.add(n.preStr);
+                }
                 if(n.premap[i+1][j]!=1) help(i+1, j, n);
                 if(n.premap[i][j+1]!=1) help(i, j+1, n);
                 if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
@@ -177,7 +223,7 @@ public class Boggle {
     public static void main(String[] args) {
         try {
             Boggle.solve(7, "exampleBoard.txt");
-        } catch (Exception e){
+        } catch (IllegalArgumentException e){
             System.out.println(111);
         }
     }
