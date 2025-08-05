@@ -1,20 +1,18 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Stack;
 
 public class Trie {
 
-    public Trie(String path){
-        try{
-            BufferedReader br=new BufferedReader(new FileReader(path));
-            String line;
-            while((line=br.readLine())!=null){
-                Stack<Node> s=new Stack<>();
-                s.push(root);
+    public Trie(String path) throws Exception{
+        BufferedReader br=new BufferedReader(new FileReader(path));
+        String line;
+        while((line=br.readLine())!=null){
+            Stack<Node> s=new Stack<>();
+            s.push(root);
 
-                for(int i=0;i<line.length();++i){
-                    if(line.charAt(i)==33541){
+            for(int i=0;i<line.length();++i){
+                if(line.charAt(i)==33541){
                         Node n1=s.pop();
                         if(n1.links[128]==null){
                             Node n2=new Node();
@@ -23,7 +21,7 @@ public class Trie {
                         s.push(n1.links[128]);
                         continue;
                     }
-                    else if(line.charAt(i)==29483){
+                else if(line.charAt(i)==29483){
                         Node n1=s.pop();
                         if(n1.links[129]==null){
                             Node n2=new Node();
@@ -32,7 +30,7 @@ public class Trie {
                         s.push(n1.links[129]);
                         continue;
                     }
-                    else if(line.charAt(i)==38170){
+                else if(line.charAt(i)==38170){
                         Node n1=s.pop();
                         if(n1.links[130]==null){
                             Node n2=new Node();
@@ -42,21 +40,18 @@ public class Trie {
                         continue;
                     }
 
-                    Node n1=s.pop();
-                    if(n1.links[line.charAt(i)]==null){
+                Node n1=s.pop();
+                if(n1.links[line.charAt(i)]==null){
                         Node n2=new Node();
                         n1.links[line.charAt(i)]=n2;
                     }
-                    s.push(n1.links[line.charAt(i)]);
-                }
-
-                Node n=s.pop();
-                n.exists=true;
+                s.push(n1.links[line.charAt(i)]);
             }
-            br.close();
+
+            Node n=s.pop();
+            n.exists=true;
         }
-        catch(IOException e){
-        }
+        br.close();
     }
 
     private static final int R=131;
@@ -104,11 +99,6 @@ public class Trie {
         else if(ch==38170) return isLevelContains(x.links[130], key, d+1);
         return isLevelContains(x.links[ch],key,d+1);
 
-    }
-
-    public static void main(String[] args) {
-        Trie t=new Trie("words.txt");
-        System.out.println(t.contains("set"));
     }
 
 }
