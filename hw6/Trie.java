@@ -1,13 +1,11 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.Stack;
 
 public class Trie {
 
     public Trie(String path) throws Exception{
-        BufferedReader br=new BufferedReader(new FileReader(path));
+        In in=new In(path);
         String line;
-        while((line=br.readLine())!=null){
+        while((line=in.readLine())!=null){
             Stack<Node> s=new Stack<>();
             s.push(root);
 
@@ -53,7 +51,7 @@ public class Trie {
             Node n=s.pop();
             n.exists=true;
         }
-        br.close();
+        in.close();
     }
 
     private static final int R=259;
