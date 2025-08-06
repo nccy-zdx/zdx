@@ -19,10 +19,10 @@ public class Boggle {
         public int[][] premap;
         public String preStr;
 
-        public Node(char letter,Node preNode,String preString,int[][] premap,int i,int j){
+        public Node(char letter,String preString,int[][] premap,int i,int j){
             preStr=preString;
             preStr+=letter;
-            this.premap=new int[premap.length][premap[1].length];
+            this.premap=new int[premap.length][premap[0].length];
             for(int m=0;m<premap.length;++m){
                 for(int n=0;n<premap[0].length;++n){
                     this.premap[m][n]=premap[m][n];
@@ -79,7 +79,7 @@ public class Boggle {
             for(int j=0;j<strs[i].length();++j){
                 int[][] premap=new int[strs.length][strs[i].length()];
                 String str=new String();
-                Node n=new Node(strs[i].charAt(j), null, str, premap, i, j);
+                Node n=new Node(strs[i].charAt(j), str, premap, i, j);
                 search(i, j, n);
             }
         }
@@ -98,7 +98,7 @@ public class Boggle {
     }
 
     private static void help(int i,int j,Node n){
-        Node n1=new Node(strs[i].charAt(j), n, n.preStr, n.premap, i, j);
+        Node n1=new Node(strs[i].charAt(j), n.preStr, n.premap, i, j);
         search(i, j, n1);
     }
 
