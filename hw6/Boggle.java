@@ -61,12 +61,12 @@ public class Boggle {
      *         have them in ascending alphabetical order.
      */
     public static List<String> solve(int k, String boardFilePath){
-        if(k<=0) throw new IllegalArgumentException("k is non-positive. k:"+k);
+        //if(k<=0) throw new IllegalArgumentException("k is non-positive. k:"+k);
         In in=new In(boardFilePath);
         strs=in.readAllLines();
-        for(int i=1;i<strs.length;++i){
+        /*for(int i=1;i<strs.length;++i){
             if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
-        }
+        }*/
         trie=new Trie(dictPath);
 
         List<String> list=new ArrayList<>();
