@@ -50,15 +50,6 @@ public class Boggle {
 
     }
 
-    private static void start(){
-        try{
-            trie=new Trie(dictPath);
-        }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-
     /**
      * Solves a Boggle puzzle.
      * 
@@ -76,7 +67,7 @@ public class Boggle {
         for(int i=1;i<strs.length;++i){
             if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
         }
-        start();
+        trie=new Trie(dictPath);
 
         List<String> list=new ArrayList<>();
         hs=new HashSet<>();
@@ -222,10 +213,6 @@ public class Boggle {
                 if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(Boggle.solve(7, "smallBoard.txt"));
     }
 
 }

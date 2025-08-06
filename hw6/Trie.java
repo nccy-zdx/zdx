@@ -2,7 +2,7 @@ import java.util.Stack;
 
 public class Trie {
 
-    public Trie(String path) throws Exception{
+    public Trie(String path) {
         In in=new In(path);
         String line;
         while((line=in.readLine())!=null){
