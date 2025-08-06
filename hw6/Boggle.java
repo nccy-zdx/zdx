@@ -80,6 +80,7 @@ public class Boggle {
                 int[][] premap=new int[strs.length][strs[i].length()];
                 String str=new String();
                 Node n=new Node(strs[i].charAt(j), str, premap, i, j);
+                if(n.preStr==null) continue;
                 search(i, j, n);
             }
         }
