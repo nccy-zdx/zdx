@@ -67,7 +67,10 @@ public class Boggle {
         /*for(int i=1;i<strs.length;++i){
             if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
         }*/
-        trie=new Trie(dictPath);
+        try {
+            trie=new Trie(dictPath);
+        } catch (Exception e) {
+        }
 
         List<String> list=new ArrayList<>();
         hs=new HashSet<>();
