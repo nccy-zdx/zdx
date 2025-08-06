@@ -54,7 +54,7 @@ public class Trie {
         in.close();
     }
 
-    private static final int R=240;
+    private static final int R=128;
 
     class Node{
         boolean exists;
