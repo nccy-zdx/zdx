@@ -11,31 +11,31 @@ public class Trie {
 
             for(int i=0;i<line.length();++i){
                 
-                if(line.charAt(i)==33541){
+                if(line.charAt(i)==232){
                         Node n1=s.pop();
-                        if(n1.links[256]==null){
+                        if(n1.links[128]==null){
                             Node n2=new Node();
-                            n1.links[256]=n2;
+                            n1.links[128]=n2;
                         }
-                        s.push(n1.links[256]);
+                        s.push(n1.links[128]);
                         continue;
                 }
-                else if(line.charAt(i)==29483){
+                else if(line.charAt(i)==233){
                         Node n1=s.pop();
-                        if(n1.links[257]==null){
+                        if(n1.links[129]==null){
                             Node n2=new Node();
-                            n1.links[257]=n2;
+                            n1.links[129]=n2;
                         }
-                        s.push(n1.links[257]);
+                        s.push(n1.links[129]);
                         continue;
                 }
-                else if(line.charAt(i)==38170){
+                else if(line.charAt(i)==234){
                         Node n1=s.pop();
-                        if(n1.links[258]==null){
+                        if(n1.links[130]==null){
                             Node n2=new Node();
-                            n1.links[258]=n2;
+                            n1.links[130]=n2;
                         }
-                        s.push(n1.links[258]);
+                        s.push(n1.links[130]);
                         continue;
                 }
                 
@@ -54,7 +54,7 @@ public class Trie {
         in.close();
     }
 
-    private static final int R=128;
+    private static final int R=131;
 
     class Node{
         boolean exists;
@@ -77,9 +77,9 @@ public class Trie {
         if(d==key.length()) return x.exists;
 
         char ch=key.charAt(d);
-        if(ch==33541) return contains(x.links[256], key, d+1);
-        else if(ch==29483) return contains(x.links[257], key, d+1);
-        else if(ch==38170) return contains(x.links[258], key, d+1);
+        if(ch==232) return contains(x.links[128], key, d+1);
+        else if(ch==233) return contains(x.links[129], key, d+1);
+        else if(ch==234) return contains(x.links[130], key, d+1);
         
         return contains(x.links[ch],key,d+1);
     }
@@ -93,9 +93,9 @@ public class Trie {
         if(d==key.length()) return true;
 
         char ch=key.charAt(d);
-        if(ch==33541) return isLevelContains(x.links[256], key, d+1);
-        else if(ch==29483) return isLevelContains(x.links[257], key, d+1);
-        else if(ch==38170) return isLevelContains(x.links[258], key, d+1);
+        if(ch==33541) return isLevelContains(x.links[128], key, d+1);
+        else if(ch==29483) return isLevelContains(x.links[129], key, d+1);
+        else if(ch==38170) return isLevelContains(x.links[130], key, d+1);
 
         return isLevelContains(x.links[ch],key,d+1);
     }
