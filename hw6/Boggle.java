@@ -11,9 +11,9 @@ public class Boggle {
     // File path of dictionary file
     static String dictPath = "words.txt";
     private static Trie trie;
-    private static String[] strs;
     private static MaxPQ<Node> maxpq=new MaxPQ<>();
     private static HashSet<String> hs;
+    private static String[] strs;
 
     private static class Node implements Comparable<Node>{
         public String preStr;
@@ -68,7 +68,7 @@ public class Boggle {
         hs=new HashSet<>();
         
         for(int i=0;i<strs.length;++i){
-            for(int j=0;j<strs[i].length();++j){
+            for(int j=0;j<strs[0].length();++j){
                 List<Integer> l=new ArrayList<>();
                 String str=new String();
                 Node n=new Node(strs[i].charAt(j), str, l, i, j);
@@ -85,6 +85,8 @@ public class Boggle {
         }
         MaxPQ<Node> pq=new MaxPQ<>();
         maxpq=pq;
+        strs=null;
+        trie=null;
 
         return list;
     }
@@ -211,7 +213,9 @@ public class Boggle {
     }
 
     public static void main(String[] args) {
+        System.out.println(Boggle.solve(7, "exampleBoard.txt"));
         System.out.println(Boggle.solve(7, "smallBoard.txt"));
+        System.out.println(Boggle.solve(7, "smallBoard2.txt"));
     }
 
 }
