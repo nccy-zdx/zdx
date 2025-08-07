@@ -10,24 +10,20 @@ public class Boggle {
     
     // File path of dictionary file
     static String dictPath = "words.txt";
-    private static Trie trie;//=new Trie(dictPath);
+    private static Trie trie;
     private static String[] strs;
     private static MaxPQ<Node> maxpq=new MaxPQ<>();
     private static HashSet<String> hs;
 
     private static class Node implements Comparable<Node>{
-        public int[][] premap;
         public String preStr;
+        public List<Integer> l;
 
-        public Node(char letter,String preString,int[][] premap,int i,int j){
+        public Node(char letter,String preString,List<Integer> list,int i,int j){
             preStr=preString+letter;
-            this.premap=new int[premap.length][premap[0].length];
-            for(int m=0;m<premap.length;++m){
-                for(int n=0;n<premap[0].length;++n){
-                    this.premap[m][n]=premap[m][n];
-                }
-            }
-            this.premap[i][j]=1;
+            l=new ArrayList<>();
+            l.addAll(list);
+            l.add(i*501+j);
         }
 
         @Override
@@ -66,16 +62,16 @@ public class Boggle {
         for(int i=1;i<strs.length;++i){
             if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
         }
-        trie=new Trie(dictPath);
 
+        trie=new Trie(dictPath);
         List<String> list=new ArrayList<>();
         hs=new HashSet<>();
         
         for(int i=0;i<strs.length;++i){
             for(int j=0;j<strs[i].length();++j){
-                int[][] premap=new int[strs.length][strs[i].length()];
+                List<Integer> l=new ArrayList<>();
                 String str=new String();
-                Node n=new Node(strs[i].charAt(j), str, premap, i, j);
+                Node n=new Node(strs[i].charAt(j), str, l, i, j);
                 search(i, j, n);
             }
         }
@@ -94,7 +90,7 @@ public class Boggle {
     }
 
     private static void help(int i,int j,Node n){
-        Node n1=new Node(strs[i].charAt(j), n.preStr, n.premap, i, j);
+        Node n1=new Node(strs[i].charAt(j), n.preStr, n.l, i, j);
         search(i, j, n1);
     }
 
@@ -105,9 +101,9 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i+1][j]!=1) help(i+1, j, n);
-                if(n.premap[i][j+1]!=1) help(i, j+1, n);
-                if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
+                if(!n.l.contains((i+1)*501+j)) help(i+1, j, n);
+                if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
+                if(!n.l.contains((i+1)*501+j+1)) help(i+1, j+1, n);
             }
             
         }
@@ -117,9 +113,9 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i+1][j]!=1) help(i+1, j, n);
-                if(n.premap[i][j-1]!=1) help(i, j-1, n);
-                if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
+                if(!n.l.contains((i+1)*501+j)) help(i+1, j, n);
+                if(!n.l.contains(i*501+j-1)) help(i, j-1, n);
+                if(!n.l.contains((i+1)*501+j-1)) help(i+1, j-1, n);
             }
         }
         else if(i==strs.length-1&&j==0){
@@ -128,9 +124,9 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i-1][j]!=1) help(i-1, j, n);
-                if(n.premap[i][j+1]!=1) help(i, j+1, n);
-                if(n.premap[i-1][j+1]!=1) help(i-1, j+1, n);
+                if(!n.l.contains((i-1)*501+j)) help(i-1, j, n);
+                if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
+                if(!n.l.contains((i-1)*501+j+1)) help(i-1, j+1, n);
             }
         }
         else if(i==strs.length-1&&j==strs[i].length()-1){
@@ -139,9 +135,9 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i-1][j]!=1) help(i-1, j, n);
-                if(n.premap[i][j-1]!=1) help(i, j-1, n);
-                if(n.premap[i-1][j-1]!=1) help(i-1, j-1, n);
+                if(!n.l.contains((i-1)*501+j)) help(i-1, j, n);
+                if(!n.l.contains(i*501+j-1)) help(i, j-1, n);
+                if(!n.l.contains((i-1)*501+j-1)) help(i-1, j-1, n);
             }
         }
         else if(i==0){
@@ -150,11 +146,11 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i+1][j]!=1) help(i+1, j, n);
-                if(n.premap[i][j+1]!=1) help(i, j+1, n);
-                if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
-                if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
-                if(n.premap[i][j-1]!=1) help(i, j-1, n);
+                if(!n.l.contains((i+1)*501+j)) help(i+1, j, n);
+                if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
+                if(!n.l.contains((i+1)*501+j+1)) help(i+1, j+1, n);
+                if(!n.l.contains((i+1)*501+j-1)) help(i+1, j-1, n);
+                if(!n.l.contains(i*501+j-1)) help(i, j-1, n);
             }
         }
         else if(j==0){
@@ -163,11 +159,11 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i+1][j]!=1) help(i+1, j, n);
-                if(n.premap[i][j+1]!=1) help(i, j+1, n);
-                if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
-                if(n.premap[i-1][j+1]!=1) help(i-1, j+1, n);
-                if(n.premap[i-1][j]!=1) help(i-1, j, n);
+                if(!n.l.contains((i+1)*501+j)) help(i+1, j, n);
+                if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
+                if(!n.l.contains((i+1)*501+j+1)) help(i+1, j+1, n);
+                if(!n.l.contains((i-1)*501+j+1)) help(i-1, j+1, n);
+                if(!n.l.contains((i-1)*501+j)) help(i-1, j, n);
             }
         }
         else if(i==strs.length-1){
@@ -176,11 +172,11 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i-1][j]!=1) help(i-1, j, n);
-                if(n.premap[i][j+1]!=1) help(i, j+1, n);
-                if(n.premap[i-1][j+1]!=1) help(i-1, j+1, n);
-                if(n.premap[i-1][j-1]!=1) help(i-1, j-1, n);
-                if(n.premap[i][j-1]!=1) help(i, j-1, n);
+                if(!n.l.contains((i-1)*501+j)) help(i-1, j, n);
+                if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
+                if(!n.l.contains((i-1)*501+j+1)) help(i-1, j+1, n);
+                if(!n.l.contains((i-1)*501+j-1)) help(i-1, j-1, n);
+                if(!n.l.contains(i*501+j-1)) help(i, j-1, n);
             }
         }
         else if(j==strs[i].length()-1){
@@ -189,11 +185,11 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i+1][j]!=1) help(i+1, j, n);
-                if(n.premap[i][j-1]!=1) help(i, j-1, n);
-                if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
-                if(n.premap[i-1][j-1]!=1) help(i-1, j-1, n);
-                if(n.premap[i-1][j]!=1) help(i-1, j, n);
+                if(!n.l.contains((i+1)*501+j)) help(i+1, j, n);
+                if(!n.l.contains(i*501+j-1)) help(i, j-1, n);
+                if(!n.l.contains((i+1)*501+j-1)) help(i+1, j-1, n);
+                if(!n.l.contains((i-1)*501+j-1)) help(i-1, j-1, n);
+                if(!n.l.contains((i-1)*501+j)) help(i-1, j, n);
             }
         }
         else{
@@ -202,16 +198,20 @@ public class Boggle {
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
-                if(n.premap[i+1][j]!=1) help(i+1, j, n);
-                if(n.premap[i][j+1]!=1) help(i, j+1, n);
-                if(n.premap[i+1][j+1]!=1) help(i+1, j+1, n);
-                if(n.premap[i-1][j+1]!=1) help(i-1, j+1, n);
-                if(n.premap[i-1][j]!=1) help(i-1, j, n);
-                if(n.premap[i-1][j-1]!=1) help(i-1, j-1, n);
-                if(n.premap[i][j-1]!=1) help(i, j-1, n);
-                if(n.premap[i+1][j-1]!=1) help(i+1, j-1, n);
+                if(!n.l.contains((i+1)*501+j)) help(i+1, j, n);
+                if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
+                if(!n.l.contains((i+1)*501+j+1)) help(i+1, j+1, n);
+                if(!n.l.contains((i-1)*501+j+1)) help(i-1, j+1, n);
+                if(!n.l.contains((i-1)*501+j)) help(i-1, j, n);
+                if(!n.l.contains((i-1)*501+j-1)) help(i-1, j-1, n);
+                if(!n.l.contains(i*501+j-1)) help(i, j-1, n);
+                if(!n.l.contains((i+1)*501+j-1)) help(i+1, j-1, n);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Boggle.solve(7, "smallBoard2.txt"));
     }
 
 }
