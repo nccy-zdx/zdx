@@ -4,8 +4,10 @@ public class Trie {
 
     public Trie(String path) {
         In in=new In(path);
+        String[] strs=in.readAllLines();
         String line;
-        while((line=in.readLine())!=null){
+        for(int j=0;j<strs.length;++j){
+            line=strs[j];
             Stack<Node> s=new Stack<>();
             s.push(root);
 

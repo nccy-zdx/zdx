@@ -211,7 +211,7 @@ public class Boggle {
     }
 
     public static void main(String[] args) {
-        System.out.println(Boggle.solve(7, "smallBoard2.txt"));
+        System.out.println(Boggle.solve(7, "smallBoard.txt"));
     }
 
 }
