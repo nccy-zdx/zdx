@@ -10,7 +10,7 @@ public class Boggle {
     
     // File path of dictionary file
     static String dictPath = "words.txt";
-    private static Trie trie=new Trie(dictPath);
+    private static Trie trie;//=new Trie(dictPath);
     private static String[] strs;
     private static MaxPQ<Node> maxpq=new MaxPQ<>();
     private static HashSet<String> hs;
@@ -20,8 +20,7 @@ public class Boggle {
         public String preStr;
 
         public Node(char letter,String preString,int[][] premap,int i,int j){
-            preStr=preString;
-            preStr+=letter;
+            preStr=preString+letter;
             this.premap=new int[premap.length][premap[0].length];
             for(int m=0;m<premap.length;++m){
                 for(int n=0;n<premap[0].length;++n){
@@ -67,6 +66,7 @@ public class Boggle {
         for(int i=1;i<strs.length;++i){
             if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
         }
+        trie=new Trie(dictPath);
 
         List<String> list=new ArrayList<>();
         hs=new HashSet<>();
