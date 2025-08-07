@@ -4,10 +4,8 @@ public class Trie {
 
     public Trie(String path) {
         In in=new In(path);
-        String[] strs=in.readAllLines();
         String line;
-        for(int j=0;j<strs.length;++j){
-            line=strs[j];
+        while((line=in.readLine())!=null){
             Stack<Node> s=new Stack<>();
             s.push(root);
 
@@ -21,7 +19,7 @@ public class Trie {
                 if(n1.links[line.charAt(i)]==null){
                         Node n2=new Node();
                         n1.links[line.charAt(i)]=n2;
-                    }
+                }
                 s.push(n1.links[line.charAt(i)]);
             }
 

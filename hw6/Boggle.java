@@ -5,23 +5,22 @@ import java.util.List;
 
 import edu.princeton.cs.algs4.MaxPQ;
 
-
 public class Boggle {
     
     // File path of dictionary file
     static String dictPath = "words.txt";
-    private static Trie trie;
+    private static Trie trie=new Trie(dictPath);
     private static MaxPQ<Node> maxpq=new MaxPQ<>();
     private static HashSet<String> hs;
     private static String[] strs;
+    private static String lastdictPath=dictPath;
 
     private static class Node implements Comparable<Node>{
         public String preStr;
-        public List<Integer> l;
+        public List<Integer> l=new ArrayList<>();
 
         public Node(char letter,String preString,List<Integer> list,int i,int j){
             preStr=preString+letter;
-            l=new ArrayList<>();
             l.addAll(list);
             l.add(i*501+j);
         }
@@ -58,21 +57,20 @@ public class Boggle {
     public static List<String> solve(int k, String boardFilePath){
         if(k<=0) throw new IllegalArgumentException("k is non-positive. k:"+k);
         In in=new In(boardFilePath);
-        strs=in.readAllLines();
-        for(int i=1;i<strs.length;++i){
-            if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
+        if(lastdictPath!=dictPath){
+            trie=new Trie(dictPath);
+            lastdictPath=dictPath;
         }
-
-        trie=new Trie(dictPath);
         List<String> list=new ArrayList<>();
         hs=new HashSet<>();
-        
+        strs=in.readAllLines();
+
         for(int i=0;i<strs.length;++i){
+            if(strs[i].length()!=strs[0].length()) throw new IllegalArgumentException(i+"line is wrong");
             for(int j=0;j<strs[0].length();++j){
                 List<Integer> l=new ArrayList<>();
                 String str=new String();
-                Node n=new Node(strs[i].charAt(j), str, l, i, j);
-                search(i, j, n);
+                search(i, j, new Node(strs[i].charAt(j), str, l, i, j));
             }
         }
 
@@ -86,20 +84,19 @@ public class Boggle {
         MaxPQ<Node> pq=new MaxPQ<>();
         maxpq=pq;
         strs=null;
-        trie=null;
+        //trie=null;
 
         return list;
     }
 
     private static void help(int i,int j,Node n){
-        Node n1=new Node(strs[i].charAt(j), n.preStr, n.l, i, j);
-        search(i, j, n1);
+        search(i, j, new Node(strs[i].charAt(j), n.preStr, n.l, i, j));
     }
 
     private static void search(int i,int j,Node n){
         if(i==0&&j==0){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -107,11 +104,10 @@ public class Boggle {
                 if(!n.l.contains(i*501+j+1)) help(i, j+1, n);
                 if(!n.l.contains((i+1)*501+j+1)) help(i+1, j+1, n);
             }
-            
         }
         else if(i==0&&j==strs[i].length()-1){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -122,7 +118,7 @@ public class Boggle {
         }
         else if(i==strs.length-1&&j==0){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -133,7 +129,7 @@ public class Boggle {
         }
         else if(i==strs.length-1&&j==strs[i].length()-1){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -144,7 +140,7 @@ public class Boggle {
         }
         else if(i==0){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -157,7 +153,7 @@ public class Boggle {
         }
         else if(j==0){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -170,7 +166,7 @@ public class Boggle {
         }
         else if(i==strs.length-1){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -183,7 +179,7 @@ public class Boggle {
         }
         else if(j==strs[i].length()-1){
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -196,7 +192,7 @@ public class Boggle {
         }
         else{
             if(trie.isLevelContains(n.preStr)){
-                if(n.preStr.length()>=3&&trie.contains(n.preStr)&&!hs.contains(n.preStr)){
+                if(trie.contains(n.preStr)&&!hs.contains(n.preStr)&&n.preStr.length()>=3){
                     maxpq.insert(n);
                     hs.add(n.preStr);
                 }
@@ -214,8 +210,8 @@ public class Boggle {
 
     public static void main(String[] args) {
         System.out.println(Boggle.solve(7, "exampleBoard.txt"));
-        System.out.println(Boggle.solve(7, "smallBoard.txt"));
         System.out.println(Boggle.solve(7, "smallBoard2.txt"));
+        System.out.println(Boggle.solve(7, "smallBoard.txt"));
     }
 
 }
